@@ -12,3 +12,6 @@ __pycache__/
 # *.html is a BML build artifact, so that repo ignores the extension wholesale. In this repo the
 # .html files are source -- apps/datastar-quiz-rust/templates/*.html are askama templates compiled
 # into the binary.
+
+# Local agent instructions, deliberately untracked -- the human-facing version is README.md
+CLAUDE.md
