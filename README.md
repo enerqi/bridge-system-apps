@@ -146,6 +146,11 @@ domain code, neither imports panel — by prepending that directory to `sys.path
   (`repo / "apps" / "datastar-quiz"`). The `.bml` corpus is a different place — `system_home`.
 - `mod` paths are literal strings: no variables, no environment-variable expansion. That is why the
   notes repo cannot reach these apps as modules and does not try.
+- Recipe lines run through `cmd.exe` / `bash` because they start in ~9ms and are always there
+  (`nu -c` measured ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms). Neither is a good
+  language for a multi-line recipe, so anything with logic is a `[script]` recipe in python instead
+  — `uv run --no-project -p 3.14`, deliberately outside this repo's environment, because those
+  scripts are justfile plumbing rather than part of any app.
 
 ## Known issues
 

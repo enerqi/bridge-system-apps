@@ -3,8 +3,22 @@
 #
 # This repo is the applications half of the bridge system. The other half -- the .bml system notes,
 # the BML -> HTML build and the deal simulations -- lives in bridge-bidding-system, and stays there.
-set shell := ["nu", "-c"]
-set unstable  # [script] recipes - https://github.com/casey/just/issues/1479
+# SHELL, as in the app justfiles and deal-simulations/odin-sims: `cmd.exe` starts in ~9ms and is
+# always available, and just launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # [script] (1.49); also [group] 1.27, set lazy 1.47
+set unstable  # [script]
+set lazy
+# `python` alone is not a reliable cross-platform lookup (cf. python/python3/python3.x). uv resolves
+# and downloads on every platform, and --no-project means no pyproject.toml / local .venv lookup --
+# these scripts are justfile plumbing, NOT part of this repo's environment. Recipes opt in with the
+# bare `[script]` attribute (no interpreter argument).
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
 
 # The BML system-notes repo, which owns the .bml corpus these apps read. Same env-var + home-default
 # shape that repo uses for its own external checkouts (bml, bridge-markup, tina, odin-http).
@@ -117,16 +131,34 @@ mod dsperf 'apps/dsquiz-perf'
 # ---
 # copy PANEL quiz app files to deployment folder (flattened: app + bml corpus in one directory)
 [group('apps')]
+[script]
 deploy-quiz:
-    #!nu
-    let dest = 'X:/quiz-u16/'
-    glob '{{system_home}}/*.bml' | each {|file| cp $file $dest }
-    glob 'apps/quiz/*.py' | each {|file| cp $file $dest }
-    glob 'apps/quiz/*.jpeg' | each {|file| cp $file $dest }
-    glob 'apps/quiz/*_topics.toml' | each {|file| cp $file $dest }
-    cp pyproject.toml $dest
-    cp uv.lock $dest
-    let bml_dest = ($dest | path join 'bml')
-    mkdir $bml_dest
-    glob {{bml_home}}/*.py | each {|file| cp $file $bml_dest }
+    import shutil
+    from pathlib import Path
+
+    # `source_directory()`, not the cwd: the recipe is then correct whether it runs from the repo
+    # root or (were this file ever imported) from elsewhere.
+    root = Path(r"{{source_directory()}}")
+    quiz = root / "apps" / "quiz"
+    system_home = Path(r"{{system_home}}")
+    bml_home = Path(r"{{bml_home}}")
+    dest = Path(r"X:/quiz-u16/")
+
+    # Flattened on purpose: the panel app and the .bml corpus land in one directory, with the bml
+    # tools in a `bml/` subdirectory beside them.
+    dest.mkdir(parents=True, exist_ok=True)
+    for src in (
+        *system_home.glob("*.bml"),
+        *quiz.glob("*.py"),
+        *quiz.glob("*.jpeg"),
+        *quiz.glob("*_topics.toml"),
+        root / "pyproject.toml",
+        root / "uv.lock",
+    ):
+        shutil.copy2(src, dest / src.name)
+
+    bml_dest = dest / "bml"
+    bml_dest.mkdir(parents=True, exist_ok=True)
+    for src in bml_home.glob("*.py"):
+        shutil.copy2(src, bml_dest / src.name)
 
