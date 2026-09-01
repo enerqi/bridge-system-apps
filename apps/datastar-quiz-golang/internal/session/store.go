@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/corpus"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/corpus"
 )
 
 type key struct {

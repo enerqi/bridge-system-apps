@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/corpus"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/corpus"
 )
 
 // Ported from `apps/datastar-quiz/tests/test_engine.py`, which is itself asserted against

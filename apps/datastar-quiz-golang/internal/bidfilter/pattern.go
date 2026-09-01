@@ -26,7 +26,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/bids"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/bids"
 )
 
 // Whose call a pattern position asks for. Python writes this as `Optional[bool]`, where

@@ -29,8 +29,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/corpus"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/engine"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/corpus"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/engine"
 )
 
 // Cookie identifies the BROWSER, not the quiz: sessions are keyed by (browser, variant),

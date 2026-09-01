@@ -22,9 +22,9 @@ import (
 	"github.com/CAFxX/httpcompression/contrib/klauspost/gzip"
 	"github.com/starfederation/datastar-go/datastar"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/assets"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/render"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/session"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/assets"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/render"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/session"
 )
 
 // The element targets. Only `#quiz` and `#toasts` are ever patched as elements; everything

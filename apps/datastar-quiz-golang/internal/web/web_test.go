@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/corpus"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/session"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/corpus"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/session"
 )
 
 // These are the python suite's BEHAVIOURS, ported: `test_routes`, `test_stale_pages`,

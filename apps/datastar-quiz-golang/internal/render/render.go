@@ -31,9 +31,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/corpus"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/engine"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/session"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/corpus"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/engine"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/session"
 )
 
 // DefaultCSS is the base stylesheet everyone gets. The A/B/C between the hand-rolled

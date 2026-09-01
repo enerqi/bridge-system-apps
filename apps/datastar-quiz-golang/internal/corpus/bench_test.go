@@ -3,7 +3,7 @@ package corpus
 import (
 	"testing"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/bidfilter"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/bidfilter"
 )
 
 // The filter is where the CPU goes, so these are the numbers the comparison turns on.

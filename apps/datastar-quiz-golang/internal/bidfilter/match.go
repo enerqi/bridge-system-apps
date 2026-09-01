@@ -3,7 +3,7 @@ package bidfilter
 import (
 	"strings"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/bids"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/bids"
 )
 
 // Position is one place in an auction: the calls it allows. One for an ordinary call,

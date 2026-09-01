@@ -4,7 +4,7 @@ import (
 	"container/list"
 	"sync"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/bidfilter"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/bidfilter"
 )
 
 // FilterCheck is what a filter string *would* select. Asking never commits it.

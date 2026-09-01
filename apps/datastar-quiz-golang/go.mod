@@ -1,4 +1,4 @@
-module github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang
+module github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang
 
 go 1.26.7
 

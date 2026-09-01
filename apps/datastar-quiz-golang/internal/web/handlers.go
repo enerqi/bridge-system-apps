@@ -8,11 +8,11 @@ import (
 
 	"github.com/starfederation/datastar-go/datastar"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/corpus"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/engine"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/render"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/session"
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/sfx"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/corpus"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/engine"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/render"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/session"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/sfx"
 )
 
 // --- session plumbing -------------------------------------------------------

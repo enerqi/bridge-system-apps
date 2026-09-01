@@ -3,7 +3,7 @@ package bidfilter
 import (
 	"testing"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/bids"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/bids"
 )
 
 // The cases are ported one for one from `apps/quiz/tests/test_bidfilter.py`, which is the

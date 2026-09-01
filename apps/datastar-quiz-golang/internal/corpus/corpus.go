@@ -19,7 +19,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/bidfilter"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/bidfilter"
 )
 
 // The exported corpus, checked in and regenerated with `just export-corpus`. Embedded

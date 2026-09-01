@@ -1,7 +1,7 @@
 package bidfilter
 
 import (
-	"github.com/enerqi/bridge-bidding-system/apps/datastar-quiz-golang/internal/bids"
+	"github.com/enerqi/bridge-system-apps/apps/datastar-quiz-golang/internal/bids"
 )
 
 // --- correlated suit classes ------------------------------------------------
