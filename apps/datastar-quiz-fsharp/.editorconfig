@@ -1,0 +1,38 @@
+# Fantomas is the F# formatter, and `.editorconfig` is where it is configured -- it has no config file
+# of its own. `just dsfs qa` runs `fantomas --check`; `just dsfs format` rewrites.
+#
+# Only the settings that differ from Fantomas' defaults are listed, so a reader can see what this
+# project actually chose rather than a copy of the defaults.
+
+root = true
+
+[*.{fs,fsi,fsx}]
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# 110, not the default 120. The prose comments in this codebase are wrapped at 110, and code that wraps
+# at a different column from the comment above it reads as two files spliced together. The few lines
+# that legitimately exceed it are single string literals -- a datastar expression or a `data-class`
+# object -- which Fantomas will not break and should not.
+max_line_length = 110
+fsharp_max_line_length = 110
+
+# A record whose fields do not fit on one line goes one-field-per-line rather than filling. With
+# 20-field records (`PageData`, `State`) the filled form is unreadable and every field edit rewraps the
+# whole block, which makes a one-word change a twelve-line diff.
+fsharp_record_multiline_formatter = number_of_items
+fsharp_max_record_number_of_items = 3
+
+# The same for arrays and lists: the confetti table and the milestone list are meant to be read as rows.
+fsharp_array_or_list_multiline_formatter = number_of_items
+fsharp_max_array_or_list_number_of_items = 4
+
+# `member this.Foo` bodies and multi-line function arguments line up under their opening construct
+# rather than at a fixed indent, which is what keeps the long `.attr(...)` chains in `Views.fs` legible.
+fsharp_alternative_long_member_definitions = true
+fsharp_multi_line_lambda_closing_newline = true
+
+# Keep `|>` chains broken one operator per line once they do not fit -- the render pipelines in
+# `Auction.fs` are a sequence of passes and read as a list.
+fsharp_keep_max_number_of_blank_lines = 1

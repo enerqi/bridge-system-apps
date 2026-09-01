@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <AssemblyName>quizd</AssemblyName>
+        <RootNamespace>DsQuiz</RootNamespace>
+        <Nullable>disable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <!-- 1182 unused variables, 3390 malformed XML doc, 3517 unused let bindings -->
+        <WarnOn>1182;3390</WarnOn>
+        <!-- the app is one process serving one machine's requests; no culture data is read -->
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <!-- The property is ServerGarbageCollectION; `ServerGarbageCollector` is silently
+             ignored and leaves you on workstation GC (verified: it did). This project is
+             Microsoft.NET.Sdk rather than .Sdk.Web, so nothing turns server GC on for us. -->
+        <ServerGarbageCollection>true</ServerGarbageCollection>
+        <!-- DATAS is ON by default from .NET 9; RESULTS.md measures both ways, so it is named
+             here rather than inherited silently. `just serve-nodatas` flips it at run time. -->
+        <GarbageCollectionAdaptationMode>1</GarbageCollectionAdaptationMode>
+        <!-- P6 measures JIT / ReadyToRun / Native AOT as three columns; the publish recipes set
+             PublishReadyToRun and PublishAot on the command line so this project file stays one
+             build. Source-generated STJ everywhere keeps the AOT door open. -->
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- F# is compile-order significant, so this list IS the dependency graph:
+             bottom-up, Web/ last, and nothing outside Web/ touches ASP.NET. -->
+        <Compile Include="Bids.fs" />
+        <Compile Include="BidFilter/Pattern.fs" />
+        <Compile Include="BidFilter/Relative.fs" />
+        <Compile Include="BidFilter/Matcher.fs" />
+        <Compile Include="BidFilter/Topics.fs" />
+        <Compile Include="Corpus.fs" />
+        <Compile Include="Engine.fs" />
+        <Compile Include="Session.fs" />
+        <Compile Include="Sfx.fs" />
+        <Compile Include="Render/Escape.fs" />
+        <Compile Include="Render/Auction.fs" />
+        <Compile Include="Render/Names.fs" />
+        <Compile Include="Render/Signals.fs" />
+        <Compile Include="Render/Page.fs" />
+        <Compile Include="Render/Views.fs" />
+        <Compile Include="Render/Compose.fs" />
+        <Compile Include="Web/Config.fs" />
+        <Compile Include="Web/Sse.fs" />
+        <Compile Include="Web/Frames.fs" />
+        <Compile Include="Web/Assets.fs" />
+        <Compile Include="Web/Handlers.fs" />
+        <Compile Include="Web/Server.fs" />
+        <Compile Include="Program.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- the corpus is EXPORTED from the python app and embedded, byte-identical to the Go and
+             Rust ports' copies (`just export-corpus` asserts the md5s) -->
+        <EmbeddedResource Include="../../corpus/squad.json" LogicalName="corpus/squad.json" />
+        <EmbeddedResource Include="../../corpus/swedish.json" LogicalName="corpus/swedish.json" />
+        <EmbeddedResource Include="../../assets/static/*" LogicalName="static/%(Filename)%(Extension)" />
+        <EmbeddedResource Include="../../assets/media/*" LogicalName="media/%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Oxpecker" Version="2.1.1" />
+        <PackageReference Include="Oxpecker.ViewEngine" Version="2.1.0" />
+        <PackageReference Include="StarFederation.Datastar.FSharp" Version="1.4" />
+    </ItemGroup>
+
+</Project>

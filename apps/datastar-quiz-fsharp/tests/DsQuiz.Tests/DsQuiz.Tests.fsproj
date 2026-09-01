@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <WarnOn>1182;3390</WarnOn>
+        <!-- Expecto is a console runner: the tests ARE a program, so there is no reflection-based
+             discovery host to fight and `just test` is `dotnet run`. -->
+        <GenerateProgramFile>false</GenerateProgramFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="BidsTests.fs" />
+        <Compile Include="CorpusTests.fs" />
+        <Compile Include="EngineTests.fs" />
+        <Compile Include="NamesTests.fs" />
+        <Compile Include="RenderTests.fs" />
+        <Compile Include="ViewsTests.fs" />
+        <Compile Include="Main.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- the goldens are the SAME FILES the Go and Rust ports test against (`just export-corpus`
+             refreshes them); copied next to the test binary so a run needs no path guessing -->
+        <None Include="../../testdata/*.json" CopyToOutputDirectory="PreserveNewest" LinkBase="testdata" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Expecto" Version="11.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../src/DsQuiz/DsQuiz.fsproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,300 @@
+# F# port of the datastar bidding quiz, on .NET 10.
+#
+# Reachable from the repo root as a just module (`mod dsfs 'apps/datastar-quiz-fsharp'` there):
+#     just dsfs serve, just dsfs test, ...
+#
+# SHELL, as in the other five apps: `cmd.exe` starts in ~9ms and is always available, and just
+# launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # [script] (1.49); also [group] 1.27, set lazy 1.47
+set unstable  # [script]
+set lazy
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
+
+# `source_directory()`, NOT `justfile_directory()`: as a module from the repo root the latter is the
+# ROOT justfile's directory.
+project := source_directory()
+repo := parent_directory(parent_directory(source_directory()))
+app := join(source_directory(), "src", "DsQuiz")
+# 5080: python is on 5008, Go 5060, tina 5061, odin-http 5062, Rust 5070. Running them side by side
+# is the point.
+port := env_var_or_default("DSQUIZ_PORT", "5080")
+exe := join(source_directory(), "src", "DsQuiz", "bin", "Release", "net10.0", "quizd.exe")
+
+# interactive chooser (assumes fzf)
+[group('dev')]
+[script]
+default:
+	import os, subprocess
+
+	justfile = r"{{ join(source_directory(), 'justfile') }}"
+	env = {**os.environ}
+	env.setdefault("JUST_CHOOSER", 'fzf --multi --preview "just --justfile ' + justfile + ' --show {}"')
+	try:
+		rc = subprocess.run(["just", "--justfile", justfile, "--choose"], env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
+
+# RELEASE IS THE ONLY PROFILE THAT COUNTS for a measurement. A Debug build disables the optimiser
+# and every `inline`, and the matcher is exactly the generic, inlining-dependent code that suffers
+# most. `just dsfs build-debug` exists for a fast edit loop, nothing else.
+# ---
+# run the server (every core, client-side countdown, no debug panel)
+[group('serve')]
+serve *args: build
+	{{exe}} --port {{port}} {{args}}
+
+alias s := serve
+
+# THE LIKE-FOR-LIKE RUN. The python app is one asyncio loop in one process -- one core, whatever the
+# machine has. .NET will use all 24 by default, so a naive comparison says ".NET is 20x faster" when
+# it means ".NET used 20 cores".
+#
+# The knob is an ENVIRONMENT VARIABLE, not a flag, and that is not a stylistic choice: the runtime
+# reads its processor count during initialisation, before `main` runs, so there is nothing for a flag
+# to set. `DOTNET_PROCESSOR_COUNT=1` disregards process affinity and CPU limits and lands on
+# Environment.ProcessorCount, KESTREL'S IO QUEUE COUNT and the SERVER GC'S HEAP COUNT together,
+# which is why it is the honest single knob. The startup log line reports what it got.
+# ---
+# run the server with a ONE-CORE runtime -- the honest comparison against the python
+[group('serve')]
+serve-1core *args: build
+	set DOTNET_PROCESSOR_COUNT=1&& {{exe}} --port {{port}} {{args}}
+
+# run with the debug panel armed for every session
+[group('serve')]
+dev *args: build
+	{{exe}} --port {{port}} --debug 1 {{args}}
+
+alias d := dev
+
+# run with the held-SSE countdown instead of the client interval (`/timer` streams `_timeLeftPct`)
+[group('serve')]
+serve-streamed *args: build
+	{{exe}} --port {{port}} --timer stream {{args}}
+
+# run with the fragment morph (patch `#quiz`) instead of the fat one (patch `#app`)
+[group('serve')]
+serve-fragment *args: build
+	{{exe}} --port {{port}} --morph fragment {{args}}
+
+# DATAS -- the GC's dynamic heap adaptation -- is ON by default from .NET 9, so .NET 10 is the first
+# LTS where a throughput run gets it. It trades peak throughput for a smaller resident set by
+# resizing the heap count at run time, which is a real effect on the percentiles this port reports.
+# RESULTS.md measures BOTH ways; this recipe is the "off" column.
+# ---
+# run with DATAS off (classic server GC: one heap per core, sized up front)
+[group('serve')]
+serve-nodatas *args: build
+	set DOTNET_GCDynamicAdaptationMode=0&& {{exe}} --port {{port}} {{args}}
+
+# run under the deployment mount prefix, debug panel off
+[group('serve')]
+serve-deployed *args: build
+	{{exe}} --port {{port}} --prefix bridge-system-quiz --debug 0 {{args}}
+
+# build (Release)
+[group('build')]
+build:
+	dotnet build {{app}} -c Release --nologo -v quiet
+
+# build (Debug -- fast edit loop, NOT for measuring)
+[group('build')]
+build-debug:
+	dotnet build {{app}} -c Debug --nologo -v quiet
+
+# delete build output
+[group('build')]
+clean:
+	dotnet clean {{app}} -c Release --nologo -v quiet
+
+# run the tests
+[group('qa')]
+test *args:
+	dotnet run --project {{project}}/tests/DsQuiz.Tests -c Release --nologo -v quiet -- {{args}}
+
+# FANTOMAS IS THE F# FORMATTER, and it is pinned as a LOCAL dotnet tool
+# (`.config/dotnet-tools.json`) rather than installed globally, so every checkout formats identically
+# and `dotnet tool restore` is the only setup step. It is configured in `.editorconfig` -- it has no
+# config file of its own, and only the settings this project actually changed are listed there.
+#
+# There is deliberately no linter. The compiler does most of what an F# linter would (unused bindings,
+# incomplete matches, shadowing -- see `WarnOn` in the fsproj, with warnings as errors), and FSharpLint
+# is effectively unmaintained. The live option for the rest is an ANALYZER
+# (`FSharp.Analyzers.SDK`: G-Research's or Ionide's), which catches what types cannot -- `Option.get`
+# on a `None` path, a missed `Dispose`, a culture-sensitive string comparison. Not wired up yet.
+# ---
+# restore the pinned tools (fantomas); needed once per checkout
+[group('qa')]
+tools:
+	dotnet tool restore
+
+# rewrite every file the way fantomas wants it
+[group('qa')]
+format: tools
+	dotnet fantomas {{project}}/src {{project}}/tests {{project}}/bench
+
+# format check + build with warnings as errors (the fsproj sets TreatWarningsAsErrors)
+[group('qa')]
+[script]
+qa:
+	import shutil, subprocess, sys
+
+	project = r"{{ project }}"
+	app = r"{{ app }}"
+	failed = []
+
+	subprocess.run(["dotnet", "tool", "restore"], cwd=project, capture_output=True)
+
+	check = subprocess.run(
+	    ["dotnet", "fantomas", "--check", f"{project}/src", f"{project}/tests", f"{project}/bench"],
+	    cwd=project,
+	)
+	if check.returncode != 0:
+	    failed.append("fantomas --check (run `just dsfs format`)")
+
+	if subprocess.run(["dotnet", "build", app, "-c", "Release", "--nologo", "-v", "quiet"]).returncode != 0:
+	    failed.append("build")
+
+	if failed:
+	    print("FAILED: " + ", ".join(failed))
+	    sys.exit(1)
+	print("qa ok")
+
+# THE CORPUS IS SHARED AND PROVABLY IDENTICAL. It is exported from the python app, and every port
+# embeds the same bytes -- so this recipe copies them out of the Go port and asserts the md5s rather
+# than re-running the exporter and hoping. `just dsgo export-corpus` is what regenerates them.
+# ---
+# refresh corpus/*.json from the Go port and assert the bytes are unchanged
+[group('data')]
+[script]
+export-corpus:
+	import hashlib, pathlib, shutil
+
+	repo = pathlib.Path(r"{{ repo }}")
+	src = repo / "apps" / "datastar-quiz-golang" / "internal" / "corpus" / "data"
+	dst = pathlib.Path(r"{{ project }}") / "corpus"
+	expected = {
+	    "squad.json": "ad78a4027b632a002459cd466fa4cda0",
+	    "swedish.json": "6cffdf98d4aa80e7fe3b059bdad47812",
+	}
+
+	for name, md5 in expected.items():
+	    shutil.copyfile(src / name, dst / name)
+	    got = hashlib.md5((dst / name).read_bytes()).hexdigest()
+	    print(f"{name} {got} {(dst / name).stat().st_size} bytes")
+	    assert got == md5, f"{name}: expected md5 {md5}, got {got}"
+
+	goldens = {
+	    repo / "apps" / "datastar-quiz-golang" / "internal" / "corpus" / "testdata" / "filter_goldens.json": "filter_goldens.json",
+	    repo / "apps" / "datastar-quiz-golang" / "internal" / "render" / "testdata" / "topic_names.json": "topic_names.json",
+	}
+	for source, name in goldens.items():
+	    shutil.copyfile(source, pathlib.Path(r"{{ project }}") / "testdata" / name)
+	    print(f"{name} refreshed")
+
+# THE CODEGEN AXIS -- the thing this port measures that no other one can.
+#
+# Three ways to ship the same IL, and they trade startup, resident set and steady-state throughput
+# against each other:
+#   jit  the default. Everything is compiled on first use, so the first request pays for the routes.
+#   r2r  ReadyToRun: native code AOT-compiled ahead of time and carried BESIDE the IL, so the JIT can
+#        still re-optimise a hot method. Bigger file, faster start, no constraints.
+#   aot  Native AOT: no IL, no JIT, no runtime to install. Needs CreateSlimBuilder (which this app has
+#        used from the first commit) and trims what it cannot see -- which is where F# reflection and
+#        Oxpecker's TypeShape dependency are the open question. If it fails, that IS the finding.
+# ---
+# publish the JIT build (framework-dependent, the baseline column)
+[group('publish')]
+publish-jit:
+	dotnet publish {{app}} -c Release --nologo -v quiet -o {{project}}/publish/jit
+
+# publish with ReadyToRun (native code beside the IL: faster start, bigger file)
+[group('publish')]
+publish-r2r:
+	dotnet publish {{app}} -c Release --nologo -v quiet -r win-x64 --self-contained true -p:PublishReadyToRun=true -o {{project}}/publish/r2r
+
+# NATIVE AOT WORKS, and getting there took three fixes worth knowing about:
+#
+#  1. `vswhere.exe` has to be on PATH or the native LINK step fails with "not recognized" and exit
+#     code 123 -- nothing to do with F#. It ships with VS at
+#     "C:/Program Files (x86)/Microsoft Visual Studio/Installer", which this recipe prepends.
+#  2. `TreatWarningsAsErrors=false` for this publish only. Oxpecker and FSharp.Core produce AGGREGATE
+#     trim/AOT warnings (IL2104, IL3053); ILC compiles the app regardless, and promoting those to
+#     errors fails a publish that otherwise works.
+#  3. Two things in the app itself had to change, and both are in the source with a note: `routef`
+#     reflects over the handler's parameters, and F#'s `printfn` reflects over its format specifiers.
+#     Each one killed the AOT binary AT STARTUP while the build succeeded.
+# ---
+# publish with Native AOT (no JIT, no runtime: one 15.5 MB exe)
+[group('publish')]
+[windows]
+publish-aot:
+	set "PATH=C:\Program Files (x86)\Microsoft Visual Studio\Installer;%PATH%"&& dotnet publish {{app}} -c Release --nologo -v quiet -r win-x64 -p:PublishAot=true -p:TreatWarningsAsErrors=false -o {{project}}/publish/aot
+
+# publish with Native AOT (no JIT, no runtime: one 15.5 MB exe)
+[group('publish')]
+[unix]
+publish-aot:
+	dotnet publish {{app}} -c Release --nologo -v quiet -p:PublishAot=true -p:TreatWarningsAsErrors=false -o {{project}}/publish/aot
+
+# what each published column costs on disk
+[group('publish')]
+[script]
+sizes:
+	import pathlib
+
+	root = pathlib.Path(r"{{ project }}") / "publish"
+	if not root.exists():
+	    raise SystemExit("nothing published yet: just publish-jit / publish-r2r / publish-aot")
+
+	for column in sorted(root.iterdir()):
+	    total = sum(f.stat().st_size for f in column.rglob("*") if f.is_file())
+	    exe = next((f for f in column.glob("quizd*") if f.suffix in {".exe", ""}), None)
+	    exe_size = exe.stat().st_size if exe else 0
+	    print(f"{column.name:>4}  {total / 1048576:8.1f} MB total   {exe_size / 1048576:7.1f} MB quizd")
+
+# THE MICROBENCHMARKS the other ports publish: the filter over the real corpus (cold and memo-hit),
+# scoring one answer, drawing one question, and preparing the whole corpus. BenchmarkDotNet reports
+# ALLOCATIONS per operation as well, which is the column Go's and Rust's harnesses cannot show.
+# ---
+# run the microbenchmarks
+[group('perf')]
+bench *args:
+	dotnet run --project {{project}}/bench/DsQuiz.Bench -c Release --nologo -v quiet -- {{args}}
+
+# the shared locust harness against THIS port (the server must already be running)
+[group('perf')]
+perf users="400" rate="20" time="300":
+	cd {{repo}} && just dsperf headless {{users}} {{rate}} {{time}}
+
+# the wire-size and SSE-pacing instrument, also shared (the server must already be running)
+[group('perf')]
+measure *args:
+	cd {{repo}} && just dsquiz measure --base http://127.0.0.1:{{port}} {{args}}
+
+# closed-loop per-route probe, brotli and identity, as the other ports report it
+[group('perf')]
+[script]
+probe route="/" requests="3000" concurrency="4":
+	import shutil, subprocess, sys
+
+	if not shutil.which("hey"):
+	    raise SystemExit("hey is not on PATH (go install github.com/rakyll/hey@latest)")
+
+	url = f"http://127.0.0.1:{{ port }}{{ route }}"
+	for encoding in ("br", "identity"):
+	    print(f"--- {encoding} {url}")
+	    out = subprocess.run(
+	        ["hey", "-n", "{{ requests }}", "-c", "{{ concurrency }}", "-H", f"Accept-Encoding: {encoding}", url],
+	        capture_output=True, text=True,
+	    ).stdout
+	    for line in out.splitlines():
+	        if "Requests/sec" in line or "Total:" in line or "Average:" in line:
+	            print("   " + line.strip())

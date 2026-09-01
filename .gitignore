@@ -1,0 +1,14 @@
+__pycache__/
+.venv/
+.reports/
+.pytest_cache/
+.ruff_cache/
+.playwright-mcp/
+
+.claude
+.codegraph
+
+# Deliberately NOT ignored here, unlike in the bridge-bidding-system notes repo: there every root
+# *.html is a BML build artifact, so that repo ignores the extension wholesale. In this repo the
+# .html files are source -- apps/datastar-quiz-rust/templates/*.html are askama templates compiled
+# into the binary.

@@ -1,0 +1,9 @@
+# build output
+bin/
+obj/
+publish/
+*.binlog
+
+# perf artefacts
+.reports/
+BenchmarkDotNet.Artifacts/

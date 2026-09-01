@@ -1,0 +1,434 @@
+# `cmd.exe` starts in ~9ms and always available. just launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: it is a poor language for a multi-line recipe, hence uv -> python preferred for more complex tasks
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # user-defined functions (1.49)
+set unstable  # user-defined functions
+set lazy
+# `python` alone is not a reliable cross-platform lookup (cf. python/python3/python3.x)
+# uv resolves/downloads on every platform and --no-project means no looking for pyproject.toml / local .venv
+# just recipes opt in with the bare `[script]` attribute (no interpreter argument)
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
+
+main_name := "main.exe"
+test_main_name := "test-main.exe"
+
+# `join`, not the `/` operator: `/` always emits a forward slash, and cmd.exe rejects a forward-slash
+# path in *command* position ("'target' is not recognized") even quoted.
+target_path(dir, name) := join("target", dir, name)
+
+# Which linker Odin hands the object files to. `-linker:` takes exactly four values: `default` (Odin
+# picks - MSVC `link.exe` on Windows), `lld`, `radlink` (Windows only, bundled with Odin, hence the
+# Windows default here) and `mold` (Linux only, not bundled). Odin has no build cache and relinks on
+# every build, so this is a per-iteration cost. `odin-skel new --linker=VALUE` rewrites the default below.
+#
+# Override for one command without editing this file - for `-lto`, which on Windows *requires* lld, or
+# for a machine that has mold when the project default does not assume it:
+#
+#     ODIN_LINKER=lld just run_release -lto:thin
+#
+# An env var rather than a recipe argument because `odin` errors on a repeated flag ("Previous flag set:
+# 'linker'"), so a `-linker:` passed through a recipe's `*args` would collide with the one added below.
+# Which value to pick, and the lld-on-macOS and incremental-linking caveats: README, "Choosing a linker".
+linker := env_var_or_default("ODIN_LINKER", if os() == "windows" { "radlink" } else { "default" })
+
+# Tina is an external checkout, the way this repo already treats norn, bridge-markup and odin-sciter.
+# Clone it to ~/dev/tina (or set TINA_HOME) -- https://github.com/pmbanugo/tina
+#
+#     import tina     "tina:src"
+#     import http     "tina:src/extensions/http/server"
+#     import datastar "tina:src/extensions/http/datastar"
+#
+# Tina's own internal imports are relative (`import tina "../src"`), so they resolve inside its tree
+# whatever the collection is called here.
+tina_home := env_var_or_default("TINA_HOME", join(home_directory(), "dev", "tina"))
+
+# HTTP_EGRESS_BUFFER_SIZE is the per-connection response buffer, and Tina's Datastar SDK serialises
+# each SSE event into ONE exact reservation inside it -- an event that does not fit is not truncated,
+# it is refused. This app's fat morph patches #app whole, ~23.6KB measured on the python, so the 4096
+# default is nowhere near enough.
+#
+# The ceiling is NOT 65535, though response.odin's own `#assert(HTTP_EGRESS_BUFFER_SIZE <= max(u16))`
+# reads that way. The binding constraint is in server.odin: the WHOLE `HTTP_Connection` -- connection
+# state plus the egress buffer that trails it -- must fit Tina's u16 payload_offset space. Measured
+# by bisection against tina a2e8d4d: 64768 builds, 64769 fails the assertion, so the connection state
+# is 767 bytes. 64512 is that ceiling with 256 bytes of slack, so a future byte added to Tina's
+# connection state does not break the build.
+#
+# The cost is static and paid at boot: this many bytes times connection_slot_count, reserved before a
+# single request arrives (63KB * 512 = ~32MB). That is the trade Tina asks for.
+egress_buffer_size := env_var_or_default("TINA_EGRESS_BUFFER_SIZE", "64512")
+
+# NOT `quote()`: it emits POSIX single-quoting, which cmd.exe passes through as literal characters
+# (odin then reports "collection path must be a directory"). Double quotes are honoured by both shells.
+odin_flags := '-collection:tina="' + tina_home + '" -define:HTTP_EGRESS_BUFFER_SIZE=' + egress_buffer_size
+
+import '.just/toolchain.just'
+import '.just/editor.just'
+# Optional features in same recipe namespace. `odin-skel add bench` to install, and `rm -rf bench/` to uninstall.
+import? 'bench/bench.just'
+
+# Here, not in .just/toolchain.just - what gets formatted is a project decision
+# `{{odinfmt_bin}}`, never a bare `odinfmt` - pins the binary for project consistency
+# ---
+# odinfmt every odin file under this directory or subdirectories
+[group('qa')]
+format: ensure-odinfmt
+	"{{odinfmt_bin}}" -w .
+
+# `odin check` applies `-vet` and `-strict-style` to EVERY package it parses, the tina collection
+# included, and there is no way to scope them. Tina is space-indented (this project is tab-indented,
+# per .editorconfig) and its simulation-test files import `core:testing`/`core:fmt` that are unused
+# outside a test build -- so with the collection on the command line, `-vet-tabs`, `-strict-style`
+# and plain `-vet` all fail on somebody else's source before reaching ours.
+#
+# So linting is split by whether a package imports tina, which is a useful line anyway:
+#   `lint`        type-checks everything, including the tina-facing edge (web/, the root package)
+#   `lint-strict` runs the full vet + style set over the packages that are pure logic -- bids,
+#                 bidfilter, corpus, engine, render, session, sfx -- which is most of the code
+# `just qa` runs both. Tab indentation in web/ and the root is held by `just format` (odinfmt) and
+# .editorconfig instead of by the compiler.
+# ---
+# type check everything, tina included. No code generation
+[group('qa')]
+lint *args:
+	odin check . {{odin_flags}} -no-entry-point {{args}}
+
+# full vet + style over every package that does not import tina
+[group('qa')]
+[script]
+lint-strict *args:
+	import pathlib, subprocess, sys
+
+	flags = ["-vet", "-vet-cast", "-strict-style", "-vet-tabs", "-no-entry-point"]
+	root = pathlib.Path(r"{{ source_directory() }}")
+	# `web` and `shardcheck` are the two packages that import tina, so they are checked by `lint`
+	# (with the collection) rather than here. Everything else is pure logic and gets the full set.
+	skip = {"web", "shardcheck", "target", "bench", ".just", ".sublime"}
+
+	packages = sorted(
+		d for d in root.iterdir()
+		if d.is_dir() and d.name not in skip and not d.name.startswith(".")
+		and any(d.glob("*.odin"))
+	)
+	if not packages:
+		print("no pure-logic packages yet; nothing to check")
+		raise SystemExit(0)
+
+	failed = []
+	for package in packages:
+		result = subprocess.run(["odin", "check", str(package), *flags, *r"""{{args}}""".split()])
+		if result.returncode != 0:
+			failed.append(package.name)
+	if failed:
+		print(f"lint-strict failed: {', '.join(failed)}", file=sys.stderr)
+	raise SystemExit(1 if failed else 0)
+
+
+# Every recipe that produces a binary depends on this. Odin does not create the out directory.
+# ---
+# ensure the build artifacts top level directory exists
+[group('housekeeping')]
+[unix]
+@mktarget_dirs:
+	mkdir -p target/debug target/fast_debug target/release_debug target/release target/release_nochecks
+
+# `if not exist` rather than swallowing md's "already exists" with `2>nul`, so a genuine failure still
+# sets a non-zero exit. The loop var is a single `%d`, NOT the `%%d` that a .bat file would use for escaping
+# ---
+# ensure the build artifacts top level directory exists
+[group('housekeeping')]
+[windows]
+@mktarget_dirs:
+	for %d in (debug fast_debug release_debug release release_nochecks) do @if not exist target\%d md target\%d || exit /b 1
+
+# `-debug` implies `-o:none`, so this is the fastest to compile and the friendliest to step through.
+# (-keep-executable so `rerun_debug` can skip recompiling)
+# ---
+# run with debug build
+[group('build')]
+run_debug *args: mktarget_dirs
+	odin run . {{odin_flags}} -debug -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("debug", main_name) }} {{args}}
+
+alias run := run_debug
+
+# `-o:minimal` is one rung above the `-debug` default of `-o:none`: still quick to compile and mostly
+# faithful to step through, but noticeably faster at runtime. (-keep-executable so `rerun_fast_debug` avoids recompile)
+# ---
+# run with debug info and light optimizations
+[group('build')]
+run_fast_debug *args: mktarget_dirs
+	odin run . {{odin_flags}} -debug -o:minimal -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("fast_debug", main_name) }} {{args}}
+
+# Release codegen with debug info retained: for profiling and for chasing bugs that only appear under optimization
+# Slowest to compile, and the debugger will jump around inlined/reordered code.
+# (-keep-executable so `rerun_release_debug` can skip recompiling)
+# ---
+# run with full optimizations AND debug info
+[group('build')]
+run_release_debug *args: mktarget_dirs
+	odin run . {{odin_flags}} -debug -o:speed -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("release_debug", main_name) }} {{args}}
+
+# run with optimizations (-keep-executable so `rerun_release` can skip recompiling)
+[group('build')]
+run_release *args: mktarget_dirs
+	odin run . {{odin_flags}} -o:speed -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("release", main_name) }} {{args}}
+
+# `run_release` plus every runtime safety check compiled out: `-no-bounds-check` (slice/array indexing),
+# `-disable-assert` (the built-in `assert`) and `-no-type-assert` (union/any type assertions). Those
+# checks are what turn a memory-corrupting bug into a clean panic, so a fault here is undefined
+# behaviour rather than a readable message - benchmark against `run_release` before adopting it, and
+# keep a checked build in your test matrix. `-o:aggressive` exists too but Odin flags it as risky.
+# (-keep-executable so `rerun_release_nochecks` can skip recompiling)
+# ---
+# run with optimizations and ALL runtime safety checks removed
+[group('build')]
+run_release_nochecks *args: mktarget_dirs
+	odin run . {{odin_flags}} -o:speed -no-bounds-check -disable-assert -no-type-assert -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("release_nochecks", main_name) }} {{args}}
+
+# Outside the kind markers on purpose: `test_sanitize` below ships in every project, so these notes must
+# not be stripped along with the exe-only `sanitize`.
+#
+# KIND is `address` (default, ASan), `memory` or `thread`; only `address` is widely supported. ON WINDOWS
+# `address` CATCHES STACK ERRORS BUT NOT HEAP ERRORS - Odin allocates through `HeapAlloc`, which ASan does
+# not intercept, so a clean run there says nothing about your heap. (Probed a 16-byte allocation at +16,
+# +24, +32, +64, +256: Linux reports `heap-buffer-overflow` from +24 on, Windows at none. +16 is in bounds
+# either way - the allocator hands back more than asked for.) The rest, and the Linux
+# `libclang_rt.asan.a` install: README, "Tasks".
+#
+# Both recipes deliberately omit `-linker:{{linker}}` - do not "fix" the inconsistency. A sanitizer has to
+# interpose on the runtime and not every linker cooperates: `radlink` (this file's Windows default, and
+# bundled with Odin, so it is what you get by accident) links an ASan binary that dies on startup with a
+# bare `0xc000001d` illegal-instruction exception and no usable stack, while `-linker:default` runs it.
+# Link speed is worth nothing on a diagnostic run anyway.
+
+# Usage:  just sanitize   or   just sanitize thread -- --my-arg
+# ---
+# run a debug build under a sanitizer (address | memory | thread)
+[group('test')]
+sanitize kind="address" *args: mktarget_dirs
+	odin run . {{odin_flags}} -debug -sanitize:{{kind}} -out:{{ target_path("debug", f"sanitize-{{kind}}-{{main_name}}") }} {{args}}
+
+# See the notes above for platform support, the Windows heap caveat and why no linker is pinned.
+# Usage:  just test_sanitize   or   just test_sanitize thread
+# ---
+# run the tests under a sanitizer (address | memory | thread)
+[group('test')]
+test_sanitize kind="address" *args: mktarget_dirs
+	odin test . {{odin_flags}} -debug -file -sanitize:{{kind}} -out:{{ target_path("debug", f"sanitize-{{kind}}-{{test_main_name}}") }} {{args}}
+
+# Odin has no build cache, so a plain `run` always rebuilds. Requires a prior `run_debug`/`run` build.
+# ---
+# re-run the last debug binary WITHOUT recompiling
+[group('build')]
+rerun_debug *args:
+	{{ target_path("debug", main_name) }} {{args}}
+
+alias rerun := rerun_debug
+
+# re-run the last fast_debug binary without recompiling. Requires a prior `run_fast_debug` build.
+[group('build')]
+rerun_fast_debug *args:
+	{{ target_path("fast_debug", main_name) }} {{args}}
+
+# re-run the last release_debug binary without recompiling. Requires a prior `run_release_debug` build.
+[group('build')]
+rerun_release_debug *args:
+	{{ target_path("release_debug", main_name) }} {{args}}
+
+# re-run the last release binary without recompiling. Requires a prior `run_release` build.
+[group('build')]
+rerun_release *args:
+	{{ target_path("release", main_name) }} {{args}}
+
+# re-run the last nochecks binary without recompiling. Requires a prior `run_release_nochecks` build.
+[group('build')]
+rerun_release_nochecks *args:
+	{{ target_path("release_nochecks", main_name) }} {{args}}
+
+# hyperfine (https://github.com/sharkdp/hyperfine) times whole *processes*, and is installed separately -
+# `just doctor` reports whether it is there. Over `rerun_release`'s binary rather than `just run_release`:
+# Odin has no build cache, so timing the recipe would mostly time the compiler - build first. `-N` skips
+# the shell hyperfine would otherwise spawn per run, at the cost that hyperfine splits the command
+# itself: no pipes, redirects or quoted arguments containing spaces. Process startup (~31ms here)
+# swamps anything smaller - for per-procedure numbers add the harness, `odin-skel add bench`.
+# See the README, "Timing a recipe" and "Benchmarking".
+#
+# `replace` back to forward slashes, unlike every other use of `target_path` here. Under `-N` the
+# command is parsed by hyperfine, whose splitter treats `\` as an escape, so a Windows path arrives as
+# `targetreleasemain.exe` and fails with a bare "program not found" - with the binary sitting right
+# there. Recipes that put the path in *command* position keep the native separators, because that is
+# the case cmd.exe rejects a forward slash in.
+#
+# Usage:  just time_release            time the release binary
+#         just time_release --flag=x   ... passing arguments to the program
+# ---
+# time the release binary end to end with hyperfine (needs a prior run_release/build)
+[group('perf')]
+time_release *args:
+	hyperfine -N --warmup 3 "{{ replace(target_path("release", main_name), "\\", "/") }} {{args}}"
+
+# A/B two build profiles in one run - hyperfine prints the ratio between them, which is the number worth
+# knowing about `-no-bounds-check`. Times both binaries, so needs a prior `run_release` AND
+# `run_release_nochecks`. Forward slashes for the same reason as `time_release` above.
+# ---
+# compare the release and nochecks binaries with hyperfine
+[group('perf')]
+time_profiles *args:
+	hyperfine -N --warmup 3 "{{ replace(target_path("release", main_name), "\\", "/") }} {{args}}" "{{ replace(target_path("release_nochecks", main_name), "\\", "/") }} {{args}}"
+
+# run all tests
+[group('test')]
+test *args: mktarget_dirs
+	odin test . {{odin_flags}} -debug -file -microarch:native -linker:{{linker}} -out:{{ target_path("debug", test_main_name) }} {{args}}
+
+# Filtering is a `core:testing` define, not a compiler flag - there is no `-test-name:`, and a stale
+# spelling of one fails with `Unknown flag: 'test-name'` before anything builds. NAME takes a comma-separated
+# list and the package prefix is optional, so `pkg.my_test`, `my_test` and `one,two` all work:
+#     just test1 my_test
+# ---
+# run one named test (comma-separated for several)
+[group('test')]
+test1 name *args: mktarget_dirs
+	odin test . {{odin_flags}} -debug -file -microarch:native -define:ODIN_TEST_NAMES={{name}} -linker:{{linker}} -out:{{ target_path("debug", test_main_name) }} {{args}}
+
+# simple delete of all debug databases and executables in the target directory
+[group('housekeeping')]
+[unix]
+clean:
+	rm -rf target
+	just mktarget_dirs
+
+# simple delete of all debug databases and executables in the target directory
+[group('housekeeping')]
+[windows]
+clean:
+	if exist target rmdir /s /q target
+	just mktarget_dirs
+
+# build with some verbose diagnostics
+[group('build')]
+diagnose *args: mktarget_dirs
+	odin build . {{odin_flags}} -debug -microarch:native -show-more-timings -show-debug-messages -show-timings -linker:{{linker}} -out:{{ target_path("debug", main_name) }} {{args}}
+
+#
+# The quiz app
+#
+# The fourth implementation of the bidding quiz (python -> go -> rust -> here), on Tina. Same corpus,
+# same routes, same wire protocol, driven by the same `apps/dsquiz-perf` harness as the others.
+# Port 5061; the python serves 5008 and the Go port 5060, so all three can run side by side.
+#
+
+# Phase I's proof, and the only place multi-shard runs on this machine: the REAL store isolate on
+# shard 0, driven by a prober on every shard, with no HTTP anywhere. Tina's HTTP server is
+# single-shard on Windows (no cross-shard FD handoff, no SO_REUSEPORT); its core is not, so the
+# protocol, the lease and the queue can be exercised across threads even here.
+#
+# `just shardcheck 10` is the ceiling this project runs -- a shard spins a whole core at idle, so ten
+# is ten cores of this box. Anything higher is clamped.
+# ---
+# run the cross-shard session-store check (default 4 shards, max 10)
+[group('test')]
+shardcheck shards="4": mktarget_dirs
+	odin run shardcheck {{odin_flags}} -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", "shardcheck.exe") }} -- {{shards}}
+
+# serve the quiz, optimised, WITHOUT the brotli encoder. Everyday development.
+[group('run')]
+serve *args: (run_release args)
+
+# The build RESULTS.md measures, and the only one comparable to the other three ports: they all
+# compress at brotli q5 with a 256-byte minimum. Off by default because it needs `just build-brotli`
+# to have staged `target/brotli/*.lib` first (that library is somebody else's source and is not
+# vendored here); everything else about the two builds is identical.
+# ---
+# serve the quiz, optimised, WITH brotli. Needs a prior `just build-brotli`
+[group('run')]
+serve-brotli *args: (run_release "-define:DSQUIZ_BROTLI=true" args)
+
+# serve the quiz with bounds checks and debug info, for development
+[group('run')]
+serve-debug *args: (run_debug args)
+
+# serve-brotli with bounds checks and debug info. This is the build to reproduce the index-route
+# crash against -- `hey -n 6000 -c 300 http://127.0.0.1:5061/` (RESULTS.md, "Where this server
+# actually stops"); locust cannot drive an -o:none build hard enough to fault it.
+# ---
+# serve WITH brotli, with bounds checks and debug info
+[group('run')]
+serve-brotli-debug *args: (run_debug "-define:DSQUIZ_BROTLI=true" args)
+
+# run every package's tests (`test` alone is the root package, which holds no logic)
+#
+# One `odin test` per package rather than one over the tree: each package is its own compilation, and
+# the tina-facing ones cannot carry the strict flags anyway. Also keeps a failure named by package.
+[group('test')]
+[script]
+test-all *args:
+	import pathlib, subprocess, sys
+
+	root = pathlib.Path(r"{{ source_directory() }}")
+	skip = {"target", "bench", ".just", ".sublime", "assets", "testdata"}
+	packages = sorted(
+		d for d in root.iterdir()
+		if d.is_dir() and d.name not in skip and not d.name.startswith(".")
+		and any(d.glob("*_test.odin"))
+	)
+
+	failed = []
+	for package in packages:
+		out = root / "target" / "debug" / f"{package.name}-test.exe"
+		command = [
+			"odin", "test", str(package), "-debug", "-file",
+			f"-out:{out}", *r"""{{args}}""".split(),
+		]
+		if subprocess.run(command).returncode != 0:
+			failed.append(package.name)
+	if failed:
+		print(f"tests failed: {', '.join(failed)}", file=sys.stderr)
+	raise SystemExit(1 if failed else 0)
+
+# everything a change has to pass: format, both lints, every package's tests
+[group('qa')]
+qa: format lint lint-strict test-all
+
+# NOT a dependency of `serve`: the encoder is compiled in only with `-define:DSQUIZ_BROTLI=true`
+# (`just serve-brotli`). That build DOES run -- the fault was the staged library rather than the
+# bindings, and the MSVC static-CRT (`/MT`) one this recipe produces is what fixed it. README.md,
+# "Deliberate divergences", and RESULTS.md have the measurements.
+#
+# The MSVC toolchain and the STATIC runtime both matter. CMake picks whatever compiler it finds --
+# chocolatey's gcc, here -- and radlink cannot read the GNU `.a` it produces ("unknown file format").
+# A `/MD` build then links but references `__imp_malloc`, which an Odin executable does not provide.
+# ---
+# build the brotli encoder from ~/dev/brotli into target/brotli/ (needs cmake, ninja and MSVC)
+[group('build')]
+[script]
+build-brotli:
+	import os, pathlib, shutil, subprocess, sys
+
+	home = pathlib.Path(os.environ.get("BROTLI_HOME", pathlib.Path.home() / "dev" / "brotli"))
+	if not (home / "CMakeLists.txt").exists():
+		sys.exit(f"no brotli checkout at {home} (set BROTLI_HOME)")
+
+	vcvars = pathlib.Path(
+		r"C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat"
+	)
+	build = home / "build-mt"
+	configure = (
+		f'cmake -S . -B build-mt -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF '
+		f'-DBROTLI_DISABLE_TESTS=ON -DCMAKE_C_COMPILER=cl -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded'
+	)
+	script = f'@echo off\ncall "{vcvars}" >nul\ncd /d {home}\n{configure}\ncmake --build build-mt --target brotlienc\n'
+	batch = pathlib.Path(os.environ.get("TEMP", ".")) / "dsquiz-build-brotli.bat"
+	batch.write_text(script, encoding="utf-8")
+	if subprocess.run(["cmd", "/c", str(batch)]).returncode != 0:
+		sys.exit("brotli build failed")
+
+	out = pathlib.Path(r"{{ source_directory() }}") / "target" / "brotli"
+	out.mkdir(parents=True, exist_ok=True)
+	for name in ("brotlienc.lib", "brotlicommon.lib"):
+		shutil.copy2(build / name, out / name)
+	print(f"brotli -> {out}")
