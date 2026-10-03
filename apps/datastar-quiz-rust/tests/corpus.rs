@@ -152,7 +152,7 @@ fn the_filter_agrees_with_the_python_implementation() {
 fn the_corpus_is_the_one_the_other_ports_embed() {
     let corpus = corpus();
     assert_eq!(corpus.get("squad").unwrap().auctions.len(), 1652);
-    assert_eq!(corpus.get("swedish").unwrap().auctions.len(), 7627);
+    assert_eq!(corpus.get("swedish").unwrap().auctions.len(), 7676);
     assert_eq!(corpus.get("squad").unwrap().topics.len(), 18);
     assert_eq!(corpus.get("swedish").unwrap().topics.len(), 32);
     assert_eq!(corpus.default_system().variant.key, "squad");

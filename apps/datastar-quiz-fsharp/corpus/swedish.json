@@ -5496,7 +5496,7 @@
     "3N",
     "4CD"
    ],
-   "description": "control bidq"
+   "description": "control bid"
   },
   {
    "sequence": [
@@ -5549,7 +5549,7 @@
     "2M",
     "3x"
    ],
-   "description": "GF, natural"
+   "description": "GF, natural 2+ honours"
   },
   {
    "sequence": [
@@ -11040,6 +11040,95 @@
   },
   {
    "sequence": [
+    "1C 1H (1S)"
+   ],
+   "description": ""
+  },
+  {
+   "sequence": [
+    "1C 1H (1S)",
+    "P"
+   ],
+   "description": "weak"
+  },
+  {
+   "sequence": [
+    "1C 1H (1S)",
+    "X"
+   ],
+   "description": "weak, 3 card support"
+  },
+  {
+   "sequence": [
+    "1C 1H (1S)",
+    "1N"
+   ],
+   "description": "weak hand, NT friendly, 2 or 3 (with double NT stop) card support"
+  },
+  {
+   "sequence": [
+    "1C 1H (1S)",
+    "2C"
+   ],
+   "description": "Lakebeach"
+  },
+  {
+   "sequence": [
+    "1C 1H (1S)",
+    "2D"
+   ],
+   "description": "Odwrotka"
+  },
+  {
+   "sequence": [
+    "1C 1H (1S)",
+    "others"
+   ],
+   "description": "system on"
+  },
+  {
+   "sequence": [
+    "1C 1S (X)"
+   ],
+   "description": ""
+  },
+  {
+   "sequence": [
+    "1C 1S (X)",
+    "P"
+   ],
+   "description": "weak"
+  },
+  {
+   "sequence": [
+    "1C 1S (X)",
+    "XX"
+   ],
+   "description": "weak, support"
+  },
+  {
+   "sequence": [
+    "1C 1S (X)",
+    "2C"
+   ],
+   "description": "Lakebeach"
+  },
+  {
+   "sequence": [
+    "1C 1S (X)",
+    "2D"
+   ],
+   "description": "Odwrotka"
+  },
+  {
+   "sequence": [
+    "1C 1S (X)",
+    "others"
+   ],
+   "description": "system on"
+  },
+  {
+   "sequence": [
     "1C (X) 1H (X)"
    ],
    "description": ""
@@ -13810,7 +13899,7 @@
     "2H",
     "2S"
    ],
-   "description": "GF natural, often double fit slam hunting"
+   "description": "GF natural 2+ honours, often double fit slam hunting"
   },
   {
    "sequence": [
@@ -13878,7 +13967,7 @@
     "2H",
     "3CD"
    ],
-   "description": "GF natural, maybe longer 5 card minor, often double fit slam hunting"
+   "description": "GF natural 2+ honours, maybe longer 5 card minor, often double fit slam hunting"
   },
   {
    "sequence": [
@@ -15217,7 +15306,7 @@
     "2S",
     "3CDH"
    ],
-   "description": "GF natural, maybe longer 5 card minor, often double fit slam hunting"
+   "description": "GF natural 2+ honours, maybe longer 5 card minor, often double fit slam hunting"
   },
   {
    "sequence": [
@@ -24092,7 +24181,7 @@
     "2N",
     "3N"
    ],
-   "description": "artificial GF, some void, any !h length"
+   "description": "artificial GF, some void, NOT good 5 card side suit, any !h length"
   },
   {
    "sequence": [
@@ -29618,7 +29707,7 @@
     "2N",
     "3N"
    ],
-   "description": "artificial GF, some void, any !s length"
+   "description": "artificial GF, some void, NOT good 5 card side suit, any !s length"
   },
   {
    "sequence": [
@@ -32468,7 +32557,7 @@
     "2D",
     "2H"
    ],
-   "description": "normal bid"
+   "description": "normal bid (includes 4 card support min 4--3--3--3)"
   },
   {
    "sequence": [
@@ -33518,7 +33607,7 @@
     "3H",
     "3S"
    ],
-   "description": "!s shortage, slam try, stronger splinter (minimum with fitting values ok)"
+   "description": "!s shortage, slam try, stronger splinter (dead minimum with fitting values ok)"
   },
   {
    "sequence": [
@@ -33529,7 +33618,7 @@
     "3H",
     "3N"
    ],
-   "description": "(semi)balanced slam try"
+   "description": "serious, honour slam try"
   },
   {
    "sequence": [
@@ -33550,7 +33639,7 @@
     "3D",
     "3S"
    ],
-   "description": "artificial accept, control bidding etc. follow"
+   "description": "accept, 3 card support + control bid"
   },
   {
    "sequence": [
@@ -33561,7 +33650,38 @@
     "3S",
     "3N"
    ],
-   "description": "serious"
+   "description": "serious, honour slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2H",
+    "3D",
+    "3S",
+    "4CD"
+   ],
+   "description": "shortage, slam try, stronger splinter"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2H",
+    "3D",
+    "3N"
+   ],
+   "description": "accept, 2 card support"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2H",
+    "3D",
+    "4CD"
+   ],
+   "description": "accept, 3 card support + control bid, denies !s control"
   },
   {
    "sequence": [
@@ -33660,9 +33780,67 @@
    "sequence": [
     "1N",
     "2D",
+    "2S"
+   ],
+   "description": "max, 4+ card support, trick source 3+ top 5 honours"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2S",
+    "3D"
+   ],
+   "description": "retransfer"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2S",
+    "3D",
+    "3H"
+   ],
+   "description": "complete transfer"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2S",
+    "3D",
+    "3H",
+    "3S/4CD"
+   ],
+   "description": "shortage"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2S",
+    "3D",
+    "3H",
+    "3N"
+   ],
+   "description": "serious, honour slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2S",
+    "other"
+   ],
+   "description": "control bids without retransfer, hints non-serious"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
     "2N"
    ],
-   "description": "minimal break, total fit more than hcp"
+   "description": "either minimal break (not trash i.e. 4--3--3--3) OR max 4--3--3--3 break"
   },
   {
    "sequence": [
@@ -33703,7 +33881,109 @@
     "3H",
     "3N"
    ],
-   "description": "(semi)balanced slam try"
+   "description": "serious, honour slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "2N",
+    "other"
+   ],
+   "description": "control bids without retransfer, hints non-serious"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3C"
+   ],
+   "description": "max, 4+ card support, trick source 3+ top 5 honours"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3C",
+    "3D"
+   ],
+   "description": "retransfer"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3C",
+    "3D",
+    "3H"
+   ],
+   "description": "complete transfer"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3C",
+    "3D",
+    "3H",
+    "3S/4CD"
+   ],
+   "description": "shortage"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3C",
+    "3D",
+    "3H",
+    "3N"
+   ],
+   "description": "serious, honour slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3C",
+    "other"
+   ],
+   "description": "control bids without retransfer, hints non-serious"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3D"
+   ],
+   "description": "max, 4+ card support, trick source 3+ top 5 honours"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3D",
+    "3H"
+   ],
+   "description": "to play"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3D",
+    "suit"
+   ],
+   "description": "shortage, slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2D",
+    "3D",
+    "3N"
+   ],
+   "description": "serious, honour slam try"
   },
   {
    "sequence": [
@@ -33711,7 +33991,7 @@
     "2D",
     "3H"
    ],
-   "description": "maximal break"
+   "description": "maximal break, at least one doubleton, no strong trick source"
   },
   {
    "sequence": [
@@ -33729,7 +34009,7 @@
     "3H",
     "3N"
    ],
-   "description": "(semi)balanced slam try"
+   "description": "serious, honour slam try"
   },
   {
    "sequence": [
@@ -33762,7 +34042,7 @@
     "2H",
     "2S"
    ],
-   "description": "normal bid"
+   "description": "normal bid (includes 4 card support min 4--3--3--3)"
   },
   {
    "sequence": [
@@ -34797,7 +35077,7 @@
     "2S",
     "3H"
    ],
-   "description": "transfer, 6+ !ss, game invite OR slam invite including stronger splinter hand (minimum with fitting values ok)"
+   "description": "transfer, 6+ !ss, game invite OR slam invite including stronger splinter hand (dead minimum with fitting values ok)"
   },
   {
    "sequence": [
@@ -34818,7 +35098,7 @@
     "3S",
     "3N"
    ],
-   "description": "(semi)balanced slam try"
+   "description": "serious, honour slam try"
   },
   {
    "sequence": [
@@ -34839,7 +35119,17 @@
     "3H",
     "3N"
    ],
-   "description": "artificial accept, control bidding etc. follow"
+   "description": "accept, 2 card support"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "2S",
+    "3H",
+    "4x"
+   ],
+   "description": "accept, 3 card support + control bid"
   },
   {
    "sequence": [
@@ -34913,7 +35203,7 @@
     "2H",
     "2N"
    ],
-   "description": "minimal break, total fit more than hcp"
+   "description": "either minimal break (not trash e.g. 4--3--3--3) OR max 4--3--3--3 break"
   },
   {
    "sequence": [
@@ -34932,18 +35222,7 @@
     "3H",
     "3S"
    ],
-   "description": "retransferred"
-  },
-  {
-   "sequence": [
-    "1N",
-    "2H",
-    "2N",
-    "3H",
-    "3S",
-    "3N"
-   ],
-   "description": "serious, slam try, despite opener's spread out values"
+   "description": "complete transfer"
   },
   {
    "sequence": [
@@ -34960,9 +35239,122 @@
    "sequence": [
     "1N",
     "2H",
+    "2N",
+    "3H",
+    "3S",
+    "3N"
+   ],
+   "description": "serious, honour slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "2N",
+    "other"
+   ],
+   "description": "control bids without retransfer, hints non-serious"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3CD"
+   ],
+   "description": "max, 4+ card support, trick source 3+ top 5 honours"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3CD",
+    "3H"
+   ],
+   "description": "retransfer"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3CD",
+    "3H",
     "3S"
    ],
-   "description": "maximal break"
+   "description": "complete transfer"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3CD",
+    "3H",
+    "3S",
+    "4CDH"
+   ],
+   "description": "shortage, slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3CD",
+    "3H",
+    "3S",
+    "3N"
+   ],
+   "description": "serious, honour slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3CD",
+    "other"
+   ],
+   "description": "control bids without retransfer, hints non-serious"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3H"
+   ],
+   "description": "max, 4+ card support, trick source 3+ top 5 honours"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3H",
+    "3S"
+   ],
+   "description": "to play"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3H",
+    "3N"
+   ],
+   "description": "serious, honour slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3H",
+    "suit"
+   ],
+   "description": "shortage, slam try"
+  },
+  {
+   "sequence": [
+    "1N",
+    "2H",
+    "3S"
+   ],
+   "description": "maximal break, at least one doubleton, no strong trick source"
   },
   {
    "sequence": [
@@ -34971,14 +35363,14 @@
     "3S",
     "3N"
    ],
-   "description": "(semi)balanced slam try"
+   "description": "serious, honour slam try"
   },
   {
    "sequence": [
     "1N",
     "2H",
     "3S",
-    "4CDH"
+    "suit"
    ],
    "description": "shortage, slam try"
   },
@@ -40244,7 +40636,7 @@
     "3D",
     "4C"
    ],
-   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining"
+   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, constructive captaining"
   },
   {
    "sequence": [
@@ -40382,7 +40774,7 @@
     "3N",
     "4C"
    ],
-   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining"
+   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, constructive captaining"
   },
   {
    "sequence": [
@@ -40671,7 +41063,7 @@
     "3N",
     "4C"
    ],
-   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining"
+   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, constructive captaining"
   },
   {
    "sequence": [
@@ -40809,7 +41201,7 @@
     "3N",
     "4C"
    ],
-   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining"
+   "description": "[Q-Minorwood](#Q-Minorwood), treating like flattish opener, constructive captaining"
   },
   {
    "sequence": [
@@ -44783,6 +45175,46 @@
     "2D",
     "2N",
     "3D",
+    "3M",
+    "3S"
+   ],
+   "description": "!s stop, !c concern"
+  },
+  {
+   "sequence": [
+    "2D",
+    "2N",
+    "3D",
+    "3M",
+    "3N"
+   ],
+   "description": "oM stop, unsure !c over 3S"
+  },
+  {
+   "sequence": [
+    "2D",
+    "2N",
+    "3D",
+    "3M",
+    "4C"
+   ],
+   "description": "lacks other major stop, control bid incase slam hunting"
+  },
+  {
+   "sequence": [
+    "2D",
+    "2N",
+    "3D",
+    "3M",
+    "4D"
+   ],
+   "description": "no major stop, no !c control bid"
+  },
+  {
+   "sequence": [
+    "2D",
+    "2N",
+    "3D",
     "4C"
    ],
    "description": "natural, 5 or 6 !cs"
@@ -46991,9 +47423,20 @@
     "2N",
     "3C",
     "3D",
+    "3H",
+    "3N",
+    "4H"
+   ],
+   "description": "to play, 6!h--4!s typically"
+  },
+  {
+   "sequence": [
+    "2N",
+    "3C",
+    "3D",
     "3S"
    ],
-   "description": "5!ss (also had 4!hs)"
+   "description": "5!ss, rarely 6!ss (also had 4!hs)"
   },
   {
    "sequence": [
@@ -47015,6 +47458,17 @@
     "4H"
    ],
    "description": "5--5 in !h + !s, mild slam interest (3!h -> 3!s transfer weak 5--5, immediate 4H forcing 5--5)"
+  },
+  {
+   "sequence": [
+    "2N",
+    "3C",
+    "3D",
+    "3S",
+    "3N",
+    "4S"
+   ],
+   "description": "to play, 6!s--4!h typically"
   },
   {
    "sequence": [
@@ -47682,7 +48136,7 @@
     "3D",
     "3N"
    ],
-   "description": "3--4--3--3 exactly (no side doubleton for 4!h bid)"
+   "description": "super accept (3)4+ card support, catchall (rare 3--4--3--3, if control heavy)"
   },
   {
    "sequence": [
@@ -47708,7 +48162,7 @@
     "3D",
     "4C"
    ],
-   "description": "super accept (3)4+ card support, source of tricks / concentration of values"
+   "description": "super accept (3)4+ card support, trick source 3+ top 5 honours"
   },
   {
    "sequence": [
@@ -47734,7 +48188,7 @@
     "3D",
     "4D"
    ],
-   "description": "super accept (3)4+ card support, source of tricks / concentration of values"
+   "description": "super accept (3)4+ card support, trick source 3+ top 5 honours"
   },
   {
    "sequence": [
@@ -47753,14 +48207,6 @@
     "other"
    ],
    "description": "!h slam try"
-  },
-  {
-   "sequence": [
-    "2N",
-    "3D",
-    "4H"
-   ],
-   "description": "super accept (3)4+ card support, catchall"
   },
   {
    "sequence": [
@@ -47875,7 +48321,7 @@
     "3H",
     "4CD"
    ],
-   "description": "super accept (3)4+ card support, source of tricks / concentration of values, some doubleton"
+   "description": "super accept (3)4+ card support, trick source 3+ top 5 honours"
   },
   {
    "sequence": [
@@ -47901,7 +48347,7 @@
     "3H",
     "4H"
    ],
-   "description": "super accept (3)4+ card support, source of tricks / concentration of values, some doubleton"
+   "description": "super accept (3)4+ card support, trick source 3+ top 5 honours"
   },
   {
    "sequence": [
@@ -59529,7 +59975,7 @@
     "(Pass)",
     "2N"
    ],
-   "description": "natural, !h stop"
+   "description": "minors"
   },
   {
    "sequence": [
@@ -59573,7 +60019,7 @@
     "(2S)",
     "2N"
    ],
-   "description": "natural, !s stop"
+   "description": "minors"
   },
   {
    "sequence": [
@@ -59638,15 +60084,17 @@
     "(2D)",
     "P",
     "(2S)",
+    "X",
     "(Pass)"
    ],
-   "description": "!ss, unless pyche"
+   "description": "!ss, unless psyche"
   },
   {
    "sequence": [
     "(2D)",
     "P",
     "(2S)",
+    "X",
     "(Pass)",
     "2N+"
    ],
@@ -63739,12 +64187,6 @@
     "5C"
    ],
    "description": "!h flag support, [Constrained Auto RKB](#Constrained Auto RKB)"
-  },
-  {
-   "sequence": [
-    "1c (Pass) 2d (Pass) 3d (Pass) 3s (Pass) 4c"
-   ],
-   "description": "seems like implied for spades (no diamond raise), but in theory big minor 2 suiter possible"
   },
   {
    "sequence": [

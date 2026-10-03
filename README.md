@@ -1,8 +1,8 @@
 # bridge-system-apps
 
-Applications built on the **BML** bridge bidding system: a Panel bidding quiz, a standalone
-point-count analysis, and six ports of the same datastar/hypermedia quiz — Python, Go, Rust, F# and
-Odin on two different HTTP runtimes — kept side by side as a runtime comparison.
+Applications built on bridge bidding systems authored in **BML** (bridge markup language): a Panel bidding quiz, a
+standalone point-count analysis, and six ports of the same datastar/hypermedia quiz — Python, Go, Rust, F# and Odin on
+two different HTTP runtimes — kept side by side as a runtime comparison.
 
 These were split out of [bridge-bidding-system](https://github.com/enerqi/bridge-bidding-systems),
 which still owns the `.bml` system notes, the BML → HTML build and the deal simulations. That repo
@@ -13,7 +13,7 @@ remains a runtime dependency of the Python apps; nothing here builds or edits th
 | just module | directory | stack | port |
 |---|---|---|---|
 | — | `apps/quiz` | Python, Panel/Bokeh — the original quiz | 5006 |
-| — | `apps/optimal-point-count` | Python, Panel — honour-combination analysis | — |
+| — | `apps/optimal-point-count` | Python, Panel — honour-combination evaluation | — |
 | `dsquiz` | `apps/datastar-quiz` | Python, litestar + uvicorn/granian — the reference port; owns the BML parser and the corpus exporters | 5008 |
 | `dsgo` | `apps/datastar-quiz-golang` | Go, `net/http` + datastar-go | 5060 |
 | `dstina` | `apps/datastar-quiz-tina` | Odin, tina http — shared-nothing, thread-per-core, no allocation after boot | 5061 |

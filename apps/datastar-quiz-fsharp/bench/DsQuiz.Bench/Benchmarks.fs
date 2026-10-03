@@ -42,7 +42,7 @@ type FilterBenchmarks() =
             | ValueNone -> failwith "swedish"
 
     /// The headline: one pattern against the bigger system's 7,627 auctions, memo cleared each time.
-    [<Benchmark(Description = "checkFilter 1C, cold (swedish, 7627 auctions)")>]
+    [<Benchmark(Description = "checkFilter 1C, cold (swedish, 7676 auctions)")>]
     member _.CheckFilterCold() : int =
         Corpus.FilterCache.clear swedish.Cache
         (Corpus.System.checkFilter "1C" MaxDifficulty swedish).Hits.Length

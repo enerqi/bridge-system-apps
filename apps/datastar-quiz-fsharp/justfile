@@ -182,7 +182,7 @@ export-corpus:
 	dst = pathlib.Path(r"{{ project }}") / "corpus"
 	expected = {
 	    "squad.json": "ad78a4027b632a002459cd466fa4cda0",
-	    "swedish.json": "6cffdf98d4aa80e7fe3b059bdad47812",
+	    "swedish.json": "a7d19b8f687f079b84d5dc6c249665bc",
 	}
 
 	for name, md5 in expected.items():

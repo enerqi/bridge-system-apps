@@ -636,8 +636,8 @@
    "text": "",
    "min_hits": 8,
    "status": "all",
-   "hits": 7627,
-   "digest": "5711c7dac02a5b9d0779a5af63209ef9a90d97997de242de4ea996f7c9946c56",
+   "hits": 7676,
+   "digest": "0b00ca8f0df55af6b9cadf8a828d57200be4cfe23b8383fc9d984a72cd831728",
    "canonical": "",
    "errors": [],
    "topic_names": []
@@ -646,8 +646,8 @@
    "text": "   ",
    "min_hits": 8,
    "status": "all",
-   "hits": 7627,
-   "digest": "5711c7dac02a5b9d0779a5af63209ef9a90d97997de242de4ea996f7c9946c56",
+   "hits": 7676,
+   "digest": "0b00ca8f0df55af6b9cadf8a828d57200be4cfe23b8383fc9d984a72cd831728",
    "canonical": "",
    "errors": [],
    "topic_names": []
@@ -656,8 +656,8 @@
    "text": "1C",
    "min_hits": 8,
    "status": "ok",
-   "hits": 1390,
-   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "hits": 1402,
+   "digest": "5e5c7717671fb0a5c14556f00c11364fca4777c123bea820e4fce387da83c28e",
    "canonical": "1C",
    "errors": [],
    "topic_names": []
@@ -666,8 +666,8 @@
    "text": "1c",
    "min_hits": 8,
    "status": "ok",
-   "hits": 1390,
-   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "hits": 1402,
+   "digest": "5e5c7717671fb0a5c14556f00c11364fca4777c123bea820e4fce387da83c28e",
    "canonical": "1C",
    "errors": [],
    "topic_names": []
@@ -677,7 +677,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 153,
-   "digest": "ebb212748e090eb57c22c1191279f2905f8049ebac9a28604a650cd8e1f71b92",
+   "digest": "e135516f1d151110156388eaa0abbec8a49619545a916f43dff4f8dee3fc5293",
    "canonical": "1D-1M-1N",
    "errors": [],
    "topic_names": []
@@ -687,7 +687,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 412,
-   "digest": "da61780519a219572d0d16b9aa137ffa2d409af42b0d8ad2993442dd9009ea08",
+   "digest": "065cdbfa6226e6ff07cd49a344311344ec606806946a6d924c6a5117c5427032",
    "canonical": "1D-1M",
    "errors": [],
    "topic_names": []
@@ -697,7 +697,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 412,
-   "digest": "da61780519a219572d0d16b9aa137ffa2d409af42b0d8ad2993442dd9009ea08",
+   "digest": "065cdbfa6226e6ff07cd49a344311344ec606806946a6d924c6a5117c5427032",
    "canonical": "1D 1M",
    "errors": [],
    "topic_names": [
@@ -708,8 +708,8 @@
    "text": "1m",
    "min_hits": 8,
    "status": "ok",
-   "hits": 2276,
-   "digest": "979d435866f400b26a618ff60abf7e85afd66962ca420c1f12a2c374db3dc460",
+   "hits": 2288,
+   "digest": "abaffb07ebd703e7d9fc1d5157d3d7f856ddadc09032fe08d5b10b9438a0ba31",
    "canonical": "1m",
    "errors": [],
    "topic_names": []
@@ -719,7 +719,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 1485,
-   "digest": "c7c9a05eb9047031683c8616b4e9ea52da8c79098e3ff9be212dd9394b3da36a",
+   "digest": "233a81c6b7ea55f1c2541dea8bf60faf62c98c8955db72e085f32310621249fc",
    "canonical": "1M",
    "errors": [],
    "topic_names": []
@@ -729,7 +729,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 433,
-   "digest": "28ff51a83a8ff8959d394d7d1f18a36ee464064653cafc3f6f686dbcc5b5f910",
+   "digest": "fd7534f1dd4f4721b9cd3e539cb9292a4969a20af053b9becbeaafac33fab1c2",
    "canonical": "2C",
    "errors": [],
    "topic_names": []
@@ -738,8 +738,8 @@
    "text": "1N",
    "min_hits": 8,
    "status": "ok",
-   "hits": 747,
-   "digest": "ef7bfba3cb174bc29b287d646213453804d0e0f96f37c52920e5aa561eaa5a2a",
+   "hits": 779,
+   "digest": "590d08c795a4dfe585db73c8588a1b5efce8fbc2044b54f0db68053c33da5d32",
    "canonical": "1N",
    "errors": [],
    "topic_names": []
@@ -749,7 +749,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 63,
-   "digest": "7cc91ff61b72d85030f97cd87316b67818abfa4b22a7f2506b283198c10e5058",
+   "digest": "b6d799bd7eac6a691e07ad0b2c96a4cdc625bea3501d96e575d5e75034c27bf6",
    "canonical": "1C-(X)",
    "errors": [],
    "topic_names": []
@@ -759,7 +759,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 521,
-   "digest": "20165263424b70a77583a36d8cf80ff778286a75672844e8d83805bfd97fcfba",
+   "digest": "2297ea5960b5e35fce4fa89a432e71a0b7b2a9f90673ef1e8bc8c0d0a11afa85",
    "canonical": "1C-(*)",
    "errors": [],
    "topic_names": []
@@ -769,7 +769,7 @@
    "min_hits": 8,
    "status": "too_few",
    "hits": 7,
-   "digest": "267c1f4d258260e27ed8714e7b764886c6e72cc33aec32485b21b419e30c146d",
+   "digest": "9755e24377a09b9f60d60ece8ea1aef2b07d5b3d1c8b51007265abbc0a1250dd",
    "canonical": "1H-(X)-2H",
    "errors": [],
    "topic_names": []
@@ -778,8 +778,8 @@
    "text": "*-*-*",
    "min_hits": 8,
    "status": "ok",
-   "hits": 6725,
-   "digest": "1a1297c53045f7395588291c2e6ebb0ad02be884ce656de9deba4315aac237dd",
+   "hits": 6774,
+   "digest": "771e9705771059cc4c99df516f471c01071533a34a891d758b0e4f6760cfbbc1",
    "canonical": "*-*-*",
    "errors": [],
    "topic_names": []
@@ -788,8 +788,8 @@
    "text": "*-*-*-*-*-*",
    "min_hits": 8,
    "status": "ok",
-   "hits": 792,
-   "digest": "6252fbdae8f242fb16eb8a75071f919fe73c79898e45cdb9205d7c9d110cca58",
+   "hits": 801,
+   "digest": "5ec14d836fc1310a54646550b47f06a9c8722e8d23ac30a1de972eb4a907cf3e",
    "canonical": "*-*-*-*-*-*",
    "errors": [],
    "topic_names": []
@@ -809,7 +809,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 164,
-   "digest": "599e36c7f19e67470d436c759222b1f083111757185f99056305f34da30ca072",
+   "digest": "14f1cc112a77f3eff7d01d47fc15a4c29fed6e614f2d59db88ddd5ea5c5dca1e",
    "canonical": "1M-2M",
    "errors": [],
    "topic_names": []
@@ -819,7 +819,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 55,
-   "digest": "a4b041d7e09e83fbf375fdb3d4e1da95d7ab4976d0e5803767546d02ae7267d6",
+   "digest": "416aad5b90d5c3ce94a75ba79137c0a320ee297c677e494d16f3012fe9341f5d",
    "canonical": "1M-3M",
    "errors": [],
    "topic_names": []
@@ -828,8 +828,8 @@
    "text": "1m-2m",
    "min_hits": 8,
    "status": "ok",
-   "hits": 460,
-   "digest": "a21ab149912777325589896289445558f6b368fc713286ecd57665e74a90c750",
+   "hits": 459,
+   "digest": "956e760826e453def18139b45202224cb2c992b72f0c67d203278370ade7cb7e",
    "canonical": "1m-2m",
    "errors": [],
    "topic_names": []
@@ -839,7 +839,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 159,
-   "digest": "db5478cc7be2ee73cef0c6122b407bb1eea0f17653d7050903c7d4702bbd2d95",
+   "digest": "900372e05b4cdbdd5ed39e1dbd356c2f0756033312bc7e054e2060540298891c",
    "canonical": "2M",
    "errors": [],
    "topic_names": []
@@ -849,7 +849,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 121,
-   "digest": "2d3645f78d7649598ce9b2ed8f28c1557f960c4a15035194f8ca266fb5a137d9",
+   "digest": "013fddca7d126f4e7a7a2850c4df89b60cb4e54644b2726f03d646ed1e320a17",
    "canonical": "3*",
    "errors": [],
    "topic_names": []
@@ -858,8 +858,8 @@
    "text": "1*",
    "min_hits": 8,
    "status": "ok",
-   "hits": 4400,
-   "digest": "d3a0b98df204f4917be51cc61b0999ff44151c29681568efaa6dc75af0179682",
+   "hits": 4444,
+   "digest": "d67ded7c719655361e98df16be99f86ef2a1c4f42045ac3558aec1e11ab4a87c",
    "canonical": "1*",
    "errors": [],
    "topic_names": []
@@ -869,7 +869,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 39,
-   "digest": "d520565c571849ae384aa845727d0a3bde112caf668dab1ec1b915d7db6cb986",
+   "digest": "1303ec57be703017c56f9af8abd6a74e714b571f054e0c1ef3f583d077337f05",
    "canonical": "4N",
    "errors": [],
    "topic_names": []
@@ -878,8 +878,8 @@
    "text": "1C, 1D",
    "min_hits": 8,
    "status": "ok",
-   "hits": 2276,
-   "digest": "979d435866f400b26a618ff60abf7e85afd66962ca420c1f12a2c374db3dc460",
+   "hits": 2288,
+   "digest": "abaffb07ebd703e7d9fc1d5157d3d7f856ddadc09032fe08d5b10b9438a0ba31",
    "canonical": "1C, 1D",
    "errors": [],
    "topic_names": []
@@ -888,8 +888,8 @@
    "text": "1C, 1D, 1H, 1S",
    "min_hits": 8,
    "status": "ok",
-   "hits": 3761,
-   "digest": "5765ab55e5d60d18cf21d3c8731df9a8d4e0946c93e10531ad7b4a1eabc40882",
+   "hits": 3773,
+   "digest": "4041ee861980db6310bc3c834b1f5e9d8ffed930d5bc0d616817dafbe51f498c",
    "canonical": "1C, 1D, 1H, 1S",
    "errors": [],
    "topic_names": []
@@ -899,7 +899,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 123,
-   "digest": "a6698befed316d76e5d21881e97b74e5d7a5c18aaef135c1f36b6547e58440a4",
+   "digest": "e565e12fb5652e7c7d56f3dae902516079c69f9c5e9d7a8ff7d73134641c3f61",
    "canonical": "1N-2C",
    "errors": [],
    "topic_names": []
@@ -908,8 +908,8 @@
    "text": "1N-2D/2H",
    "min_hits": 8,
    "status": "ok",
-   "hits": 264,
-   "digest": "6c5585fa809f6f387d362c4fe982205055b90148817a47a924efc037f9f07502",
+   "hits": 296,
+   "digest": "2b75c65ef582b53667cc610104d188b5968abf36686c0dfba52766a098abcbdd",
    "canonical": "1N-2D/2H",
    "errors": [],
    "topic_names": []
@@ -919,7 +919,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 55,
-   "digest": "c012ad58deeac3d4718eca2e05c31615b6576dd523b7f419eeb4be51bb29de6a",
+   "digest": "4f386095c968157599a6edd84d428381150f1bf99b2aecb3f4de1bed87db9bd9",
    "canonical": "1M-3S/4C",
    "errors": [],
    "topic_names": []
@@ -929,7 +929,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 143,
-   "digest": "3dc39a41c47228cdcb3e98754bb67290dd4aaeebde2b9650b49cd8d328fc8a09",
+   "digest": "49ffb9bb61270b11d0bd569b5bb77b661e7b06ad213ae7e217468581ab41c5d4",
    "canonical": "1C-2OM",
    "errors": [],
    "topic_names": []
@@ -939,7 +939,7 @@
    "min_hits": 8,
    "status": "too_few",
    "hits": 2,
-   "digest": "eb8b29881bba4934d7ca19b5a749fc3a46047c7cb8b275a6a6372e4cb549abd0",
+   "digest": "775cb51821daf4fa6cb50242a8fd9ef9a3a0b60cc33cb8e0c7e2d09546d298cb",
    "canonical": "P",
    "errors": [],
    "topic_names": []
@@ -949,7 +949,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 34,
-   "digest": "65841fb817c73f082cddb96ecf639279ce6ee7dd87afdaef8eb937f109d63b63",
+   "digest": "19b548118e34270ec8d2da8bd31c483900393853452bcfd0da20adb7c5a0ed43",
    "canonical": "1C-P",
    "errors": [],
    "topic_names": []
@@ -968,8 +968,8 @@
    "text": "nonsense!!",
    "min_hits": 8,
    "status": "error",
-   "hits": 7627,
-   "digest": "5711c7dac02a5b9d0779a5af63209ef9a90d97997de242de4ea996f7c9946c56",
+   "hits": 7676,
+   "digest": "0b00ca8f0df55af6b9cadf8a828d57200be4cfe23b8383fc9d984a72cd831728",
    "canonical": "",
    "errors": [
     "nonsense!!"
@@ -980,8 +980,8 @@
    "text": "1C, nonsense!!",
    "min_hits": 8,
    "status": "ok",
-   "hits": 1390,
-   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "hits": 1402,
+   "digest": "5e5c7717671fb0a5c14556f00c11364fca4777c123bea820e4fce387da83c28e",
    "canonical": "1C",
    "errors": [
     "nonsense!!"
@@ -993,7 +993,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 53,
-   "digest": "81ae6772b1818a46212c5139a0e8e32da9dabe955074d42c3fd7943a558b789d",
+   "digest": "24bfa02e567d0620f7ad030bbbc72d7f81f7b39008c660a95718180c0dbdeee0",
    "canonical": "2C-2D-2H",
    "errors": [],
    "topic_names": []
@@ -1003,7 +1003,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 113,
-   "digest": "a5dfad68539238de5f29472e2fcd84f5192de3fd607e321eaac44cae8865aad2",
+   "digest": "dda0e5c3cf4668d3a7f98ffc558d16a4b41afab5afa85561b21c7a83e0222707",
    "canonical": "1S-2N",
    "errors": [],
    "topic_names": []
@@ -1013,7 +1013,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 19,
-   "digest": "2d523c411e4058970d39f1c10fbcd53c71727ad24d229c00cd8c0aaf3cdafe47",
+   "digest": "e76d763a2e04d85adbab9323cd57b2fc31fd0b87a03c22246b588607a3c087f9",
    "canonical": "4C-4D",
    "errors": [],
    "topic_names": []
@@ -1023,7 +1023,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 28,
-   "digest": "32a59e1a5100719cb829968655cb4d19f9bee8adf081fe94a3640ed4239f2f19",
+   "digest": "14fe63561be73a0ca85a1bb1165b15652fbbfeaa9346d7e7aaacff1919661bc1",
    "canonical": "(1H)-2C",
    "errors": [],
    "topic_names": []
@@ -1033,7 +1033,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 135,
-   "digest": "8847bad22248dd5f748279215aa2d14e3523ace354cbc5a347a29d425ad2b90e",
+   "digest": "52108aee5af6619ff570294f89d978a1987d48229174aea8d4c9de95ef3731c9",
    "canonical": "(*)-2C",
    "errors": [],
    "topic_names": []
@@ -1043,7 +1043,7 @@
    "min_hits": 8,
    "status": "too_few",
    "hits": 2,
-   "digest": "60f6cc79632ad491ca01b4abfb9fe771be73524c244d773e77cbfcf9c12cae48",
+   "digest": "087e3b0449d99e346f581333df90a1eac1c4e4cde8c7b9ea7aad8f8687eb3b80",
    "canonical": "1D-(1S)-1H",
    "errors": [],
    "topic_names": []
@@ -1052,8 +1052,8 @@
    "text": "1C opening",
    "min_hits": 8,
    "status": "ok",
-   "hits": 1390,
-   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "hits": 1402,
+   "digest": "5e5c7717671fb0a5c14556f00c11364fca4777c123bea820e4fce387da83c28e",
    "canonical": "1C opening",
    "errors": [],
    "topic_names": [
@@ -1065,7 +1065,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 295,
-   "digest": "f40e48708673cd44f11a3ffde4b889242b3d587bdac89ee3210466dc7adce9ac",
+   "digest": "c5dbf0a290fb820ac518d3f159dd2d195cffc2cf8a7e5e85ffd64e89ab91ef52",
    "canonical": "1C negative",
    "errors": [],
    "topic_names": [
@@ -1076,8 +1076,8 @@
    "text": "1C other",
    "min_hits": 8,
    "status": "ok",
-   "hits": 946,
-   "digest": "731d1dfa62ea9559462ac7b0a94830bb2b38b6c5a2fefc1f88243596908ae42f",
+   "hits": 958,
+   "digest": "782370e136b1bb0d7f1a1c6c2a9ba3dea0e44f780bbc1154480668ee3de11944",
    "canonical": "1C other",
    "errors": [],
    "topic_names": [
@@ -1089,7 +1089,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 994,
-   "digest": "49e7c29438a2b05a699ff654e4dcfec7faa50535573537f63ee43e98a8ce4547",
+   "digest": "d5fa46ad05bf532b95f6326aea503132dd8b2b42baa5e2136280dcdf9b905884",
    "canonical": "1D opening",
    "errors": [],
    "topic_names": [
@@ -1101,7 +1101,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 412,
-   "digest": "da61780519a219572d0d16b9aa137ffa2d409af42b0d8ad2993442dd9009ea08",
+   "digest": "065cdbfa6226e6ff07cd49a344311344ec606806946a6d924c6a5117c5427032",
    "canonical": "1D 1M",
    "errors": [],
    "topic_names": [
@@ -1113,7 +1113,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 234,
-   "digest": "180bd25958b61f5f4d8f228634458b37a860827d20499697d29e1998df8645dd",
+   "digest": "2229dca35c4b88ea3b6c43eb4dab91bee152c02fbd60fef86a19eea16833f8b1",
    "canonical": "1D 2C/2D",
    "errors": [],
    "topic_names": [
@@ -1125,7 +1125,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 1485,
-   "digest": "c7c9a05eb9047031683c8616b4e9ea52da8c79098e3ff9be212dd9394b3da36a",
+   "digest": "233a81c6b7ea55f1c2541dea8bf60faf62c98c8955db72e085f32310621249fc",
    "canonical": "Major openings",
    "errors": [],
    "topic_names": [
@@ -1137,7 +1137,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 560,
-   "digest": "0a848a207f8b77932b386ebaa8a07eb67336df765b5580ca87160e007cb3ccc0",
+   "digest": "e7f71c43e2e61d4eb0acfc3ba639fc20be0c428e7f03a76da2bd939dc6f4c38f",
    "canonical": "Major Raises",
    "errors": [],
    "topic_names": [
@@ -1149,7 +1149,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 166,
-   "digest": "d52c0580155a88b70ef6c90da6c7221f9ae64a1af09e26c6ecd5e330599c7dc6",
+   "digest": "189a758d8407771d77748ad1cd77c10b7853d2e1e7722c3e9ef2999b428b4074",
    "canonical": "Major 1N Continuations",
    "errors": [],
    "topic_names": [
@@ -1161,7 +1161,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 500,
-   "digest": "02f7cda81c99d69382754e0c1ad657893e3dad189caf16ed8182f427405c8adc",
+   "digest": "87cf486fd20a7833eb6b71dcdc47513a0117e9fc0a01909967290c9120fef179",
    "canonical": "Major opening with 2 over 1 GF",
    "errors": [],
    "topic_names": [
@@ -1172,8 +1172,8 @@
    "text": "1NT opening",
    "min_hits": 8,
    "status": "ok",
-   "hits": 747,
-   "digest": "ef7bfba3cb174bc29b287d646213453804d0e0f96f37c52920e5aa561eaa5a2a",
+   "hits": 779,
+   "digest": "590d08c795a4dfe585db73c8588a1b5efce8fbc2044b54f0db68053c33da5d32",
    "canonical": "1NT opening",
    "errors": [],
    "topic_names": [
@@ -1184,8 +1184,8 @@
    "text": "1NT Stayman and Red Transfers",
    "min_hits": 8,
    "status": "ok",
-   "hits": 380,
-   "digest": "177d37aab21f0f0dd4bd9d2132db4ef05a89aa479f73fc665c2113c5768b5e2a",
+   "hits": 412,
+   "digest": "188a3e0f340d501a889bbba773dcfb8d5cf75ad0e8b9b567e94fee435691662a",
    "canonical": "1NT Stayman and Red Transfers",
    "errors": [],
    "topic_names": [
@@ -1197,7 +1197,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 309,
-   "digest": "9cb9d4aaff5844005c01af13950c42d05c6ae8b67aaed4757be7048b7bd988f7",
+   "digest": "f0881dd280012dfaeb2f71aa8c2891866bef2f214053e14f99dac719411db0c1",
    "canonical": "1NT High Responses",
    "errors": [],
    "topic_names": [
@@ -1209,7 +1209,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 227,
-   "digest": "cd79b82e4afa220234dc045a848dc4c21f3344a2f515c310593aa9aab1b5d338",
+   "digest": "75cdafa0a339a4a8963e10c8e6d0383d42e2f74a4aec30037760bc7be91b0d4d",
    "canonical": "1NT Interference",
    "errors": [],
    "topic_names": [
@@ -1221,7 +1221,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 51,
-   "digest": "c33fc1b876a7ea933ca0861593da3534e71450fd397c72e2870ead0123c9318d",
+   "digest": "dbd423d89c11f0f599107ad9afe36e056b59671ef6d493649467bab27eccc347",
    "canonical": "1NT Escapes",
    "errors": [],
    "topic_names": [
@@ -1233,7 +1233,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 433,
-   "digest": "28ff51a83a8ff8959d394d7d1f18a36ee464064653cafc3f6f686dbcc5b5f910",
+   "digest": "fd7534f1dd4f4721b9cd3e539cb9292a4969a20af053b9becbeaafac33fab1c2",
    "canonical": "2C opening",
    "errors": [],
    "topic_names": [
@@ -1245,7 +1245,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 182,
-   "digest": "907d1dff69a808fb88b1b0b426942baecf2bfd51e5fe247ecab6370a95e7e918",
+   "digest": "16f2fa7e18c29172101ae1b1f0dbd79b31988b4f69283535f24189db09cb579b",
    "canonical": "2C 2D Enquiry",
    "errors": [],
    "topic_names": [
@@ -1257,7 +1257,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 226,
-   "digest": "705b0017e791627224ef89e0f8462712e956eb48cf0a44a9f15a7412b2250e9d",
+   "digest": "e5ede1febbb6f70dc0be1275b9cfbab61af1cd1c89bdf7771844d06abc8e2d7e",
    "canonical": "2C High Responses",
    "errors": [],
    "topic_names": [
@@ -1269,7 +1269,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 60,
-   "digest": "11e4fc2aa88cf7142bb0d6c449dc6a8f3dff10ac7ee3a70d41169d7f66231648",
+   "digest": "9d3abf8b3f6b538ec752c458617ac51e401d3f4e0e53dcdd1507fa17d86a157a",
    "canonical": "2C interference",
    "errors": [],
    "topic_names": [
@@ -1280,8 +1280,8 @@
    "text": "2D opening",
    "min_hits": 8,
    "status": "ok",
-   "hits": 281,
-   "digest": "a3378ec509bca2b6443f932bdb7f7deebfe9b60db09014e250995defb7f0d519",
+   "hits": 285,
+   "digest": "19d258f809e2afbc47963e129c01f55512b2f2b1a9070eadc59563f94b5a92c7",
    "canonical": "2D opening",
    "errors": [],
    "topic_names": [
@@ -1293,7 +1293,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 19,
-   "digest": "22a88f792848f74bd56797d3a1b379d8bcbbc0852dc7729c67dacdeac12d3fd3",
+   "digest": "47ec6e59b22f28d2b2d96d707468248b1b35180e391d3b40f4860c597afd57dd",
    "canonical": "2D interference",
    "errors": [],
    "topic_names": [
@@ -1305,7 +1305,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 159,
-   "digest": "db5478cc7be2ee73cef0c6122b407bb1eea0f17653d7050903c7d4702bbd2d95",
+   "digest": "900372e05b4cdbdd5ed39e1dbd356c2f0756033312bc7e054e2060540298891c",
    "canonical": "Weak twos",
    "errors": [],
    "topic_names": [
@@ -1317,7 +1317,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 22,
-   "digest": "a023ab7ed5856ab46fb2f6f9c7c34e1ebff50fbc40928a530aa816c1b1e1eb88",
+   "digest": "725dc3818feef29da85633a9590230a3e1fda5aec9fd569b55fcfc7709556fd2",
    "canonical": "Weak two interference",
    "errors": [],
    "topic_names": [
@@ -1328,8 +1328,8 @@
    "text": "2NT opening",
    "min_hits": 8,
    "status": "ok",
-   "hits": 221,
-   "digest": "b0ed332aca2cb5fd4d554df449490535b57b88188cf96161a7270e155c299e4b",
+   "hits": 222,
+   "digest": "e5425aa716fdb1e19999c71bd280b840bde52e49789eb5a33ddac85921522175",
    "canonical": "2NT opening",
    "errors": [],
    "topic_names": [
@@ -1341,7 +1341,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 17,
-   "digest": "e6036dfd80790ea80fd649642464f29c14ac057371361e330a85b5cc06ce3525",
+   "digest": "d1c07336f2a5e01d78cf92bb6fc61355f90af814fd473a1644931187fc38d20b",
    "canonical": "2NT interference",
    "errors": [],
    "topic_names": [
@@ -1353,7 +1353,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 222,
-   "digest": "5f59d3e3adfa784ce4e701798577268ebd0b25e8b8946659cccbe63cc0462e81",
+   "digest": "1611961dc81f9605dc2476f2fb6f568b72f5cd16429e52deb6dc93660e02a263",
    "canonical": "Preempts",
    "errors": [],
    "topic_names": [
@@ -1365,7 +1365,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 555,
-   "digest": "6dbcc8d09815385daa6f44c99fb2b0da707856cafdc38712f65818debf4983f5",
+   "digest": "5191c4b39fa63b91af696a07c3395bd011601beeb35116be388720f30717d559",
    "canonical": "Opponents Start High",
    "errors": [],
    "topic_names": [
@@ -1376,8 +1376,8 @@
    "text": "We Double",
    "min_hits": 8,
    "status": "ok",
-   "hits": 503,
-   "digest": "fe34b1cabb1e95e40df8bdf66cf666788d16c28eafb8bd8de5cb4910b111f5c5",
+   "hits": 505,
+   "digest": "c7224831612a2dabb3bc2b890b2a4aaceaf8bc26f5c7f6985fac3496a1d49f55",
    "canonical": "We Double",
    "errors": [],
    "topic_names": [
@@ -1389,7 +1389,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 1507,
-   "digest": "c69cd306132c76d4519c59324408ae165ceab8acf9b69726f95b148010bc89bd",
+   "digest": "13559293222ba08649314189ca2a39b735c1bee6c22770d84c52da37e18d8cf1",
    "canonical": "Opponents interfere",
    "errors": [],
    "topic_names": [
@@ -1401,7 +1401,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 272,
-   "digest": "393435d18682d2d15d09caf2c5874148e10dbe45da1f57aa477d9d320ce2490e",
+   "digest": "35ba31399ae5f0b242d267958862430881da29c68ce180e1501e30a906efb15c",
    "canonical": "Opponents double",
    "errors": [],
    "topic_names": [
@@ -1413,7 +1413,7 @@
    "min_hits": 8,
    "status": "ok",
    "hits": 1842,
-   "digest": "984539d6ebb26dc0bbd957dfbdfe0fa28a4204ec4f8aff96b74747dd174ad8ab",
+   "digest": "7dd665d555ca596de2e38a93ee2f8e195a11155bef1d21df192fac5c25d390b5",
    "canonical": "Opponents opened",
    "errors": [],
    "topic_names": [
@@ -1424,8 +1424,8 @@
    "text": "Long auctions",
    "min_hits": 8,
    "status": "ok",
-   "hits": 792,
-   "digest": "6252fbdae8f242fb16eb8a75071f919fe73c79898e45cdb9205d7c9d110cca58",
+   "hits": 801,
+   "digest": "5ec14d836fc1310a54646550b47f06a9c8722e8d23ac30a1de972eb4a907cf3e",
    "canonical": "Long auctions",
    "errors": [],
    "topic_names": [
