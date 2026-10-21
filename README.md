@@ -18,6 +18,7 @@ remains a runtime dependency of the Python apps; nothing here builds or edits th
 | `dsgo` | `apps/datastar-quiz-golang` | Go, `net/http` + datastar-go | 5060 |
 | `dstina` | `apps/datastar-quiz-tina` | Odin, tina http — shared-nothing, thread-per-core, no allocation after boot | 5061 |
 | `dsoh` | `apps/datastar-quiz-odin-http` | Odin, odin-http — everything but `web/` is the tina port's source unchanged, so the pair isolates the HTTP runtime and nothing else | 5062 |
+| `dswasm` | `apps/datastar-quiz-wasm` | Odin → wasm, **no server** — the tina port's packages compiled to `js_wasm32`, the routes running in the page; builds ONE self-contained `.html` to share or open from disk | — |
 | `dsrs` | `apps/datastar-quiz-rust` | Rust, tokio + axum + datastar-rs | 5070 |
 | `dsfs` | `apps/datastar-quiz-fsharp` | F#, Oxpecker + StarFederation.Datastar.FSharp | 5080 |
 | `dsperf` | `apps/dsquiz-perf` | locust harness, run against any of the above | — |

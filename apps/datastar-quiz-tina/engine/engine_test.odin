@@ -1,3 +1,5 @@
+#+build !js
+// Native only: core:testing pulls in core:os, which the js_wasm32 build of these packages cannot link.
 // The rules, case by case. Every constant here is parity-critical: the python, the Go port and this
 // one have to award the same points for the same answer, or the comparison is measuring two
 // different games.

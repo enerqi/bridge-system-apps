@@ -1,3 +1,5 @@
+#+build !js
+// Native only: core:testing pulls in core:os, which the js_wasm32 build of these packages cannot link.
 // The fragment writers, where a returned empty string is a CONTRACT rather than an accident.
 package render
 

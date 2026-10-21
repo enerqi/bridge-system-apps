@@ -1,3 +1,5 @@
+#+build !js
+// Native only: core:testing pulls in core:os, which the js_wasm32 build of these packages cannot link.
 // The naming transform, pinned against the python.
 //
 // `testdata/topic_names.json` maps every real topic name to the slug and signal key the python

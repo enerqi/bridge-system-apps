@@ -1,3 +1,5 @@
+#+build !js
+// Native only: core:testing pulls in core:os, which the js_wasm32 build of these packages cannot link.
 // The store protocol, driven with no shard under it.
 //
 // This is the half of phase I that can be tested as ordinary code: `acquire`, `release` and

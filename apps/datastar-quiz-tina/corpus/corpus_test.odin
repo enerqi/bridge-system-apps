@@ -1,3 +1,5 @@
+#+build !js
+// Native only: core:testing pulls in core:os, which the js_wasm32 build of these packages cannot link.
 // The parity gate.
 //
 // `apps/datastar-quiz/tools/export_filter_goldens.py` runs 41 hand-written probes -- one per token

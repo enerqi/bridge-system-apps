@@ -1,3 +1,5 @@
+#+build !js
+// Native only: core:testing pulls in core:os, which the js_wasm32 build of these packages cannot link.
 // The call model, case by case.
 //
 // These follow `apps/quiz/tests/test_bidfilter.py` and the Go port's `internal/bids` cases, keeping

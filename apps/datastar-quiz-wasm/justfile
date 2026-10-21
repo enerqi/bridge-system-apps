@@ -1,0 +1,87 @@
+# The bidding quiz as ONE self-contained HTML page: the tina port's Odin packages compiled to wasm,
+# with the server's routes running in the page. See README.md.
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"
+set unstable
+set lazy
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
+
+# The tina port is imported, not copied: its packages are this app's packages.
+tina_port := join(source_directory(), "..", "datastar-quiz-tina")
+odin_flags := '-target:js_wasm32 -collection:quiz="' + tina_port + '"'
+
+wasm := join("target", "quiz.wasm")
+page := join("dist", "bridge-quiz.html")
+template := join("dist", "quiz-template.html")
+corpus_data := join(tina_port, "corpus", "data")
+
+# Odin's own JS runtime for the js_wasm32 target. It ships with the compiler and has to match it, so
+# it is read from the toolchain on every build rather than vendored here.
+odin_js := join(shell("odin root"), "core", "sys", "wasm", "js", "odin.js")
+
+default:
+	@just --list
+
+# the wasm module alone, -> target/quiz.wasm
+[group('build')]
+build *args: _target
+	odin build src {{ odin_flags }} -out:{{ wasm }} -o:size -vet -strict-style {{ args }}
+
+[private]
+[script]
+_target:
+	import pathlib
+	pathlib.Path("target").mkdir(exist_ok=True)
+
+# the shareable page with both systems, -> dist/bridge-quiz.html (open it from disk, or copy it anywhere)
+[group('build')]
+page: build
+	uv run --script tools/build_page.py {{ wasm }} {{ page }} "{{ odin_js }}" "{{ join(corpus_data, "squad.json") }}" "{{ join(corpus_data, "swedish.json") }}"
+
+# the page with an EMPTY corpus slot, -> dist/quiz-template.html. The notes workbench fills it from
+# the .bml file it has open: point its settings' "quiz template" at this file.
+[group('build')]
+template: build
+	uv run --script tools/build_page.py {{ wasm }} {{ template }} "{{ odin_js }}"
+
+# the routes, driven headless in node (the packages' own tests live in the tina port)
+[group('qa')]
+test: build
+	node tools/smoke.mjs {{ wasm }} "{{ odin_js }}" "{{ join(corpus_data, "squad.json") }}" "{{ join(corpus_data, "swedish.json") }}"
+
+[group('qa')]
+lint:
+	odin check src {{ odin_flags }} -vet -strict-style -vet-tabs
+
+# serve dist/ on localhost -- only needed for tools that refuse file:// (playwright does)
+[group('run')]
+serve port="5090": page
+	uv run --no-project -p 3.14 python -m http.server {{ port }} --bind 127.0.0.1 --directory dist
+
+[group('build')]
+[script]
+clean:
+	import shutil
+	for directory in ("target", "dist"):
+	    shutil.rmtree(directory, ignore_errors=True)
+
+# The notes workbench BUNDLES the template (`#load`ed into its exe, so its quiz button needs no setup), from
+# a vendored copy in the notes repo. This refreshes that copy; rebuild the workbench afterwards. The notes
+# repo is found the way the rest of this repo finds it, through BRIDGE_SYSTEM_HOME.
+notes_home := env_var_or_default("BRIDGE_SYSTEM_HOME", join(home_directory(), "docs", "bridge", "bridge-bidding-system"))
+vendored_template := join(notes_home, "deal-simulations", "odin-sims", "ui", "quiz-template.html")
+
+# rebuild the template and copy it into the notes workbench (then rebuild the workbench there)
+[group('build')]
+[script]
+vendor-template: template
+	import shutil
+	from pathlib import Path
+	target = Path(r"{{ vendored_template }}")
+	if not target.parent.is_dir():
+	    raise SystemExit(f"no notes workbench at {target.parent} - set BRIDGE_SYSTEM_HOME")
+	shutil.copyfile(r"{{ template }}", target)
+	print(f"{target}: {target.stat().st_size:,} bytes - now rebuild the workbench (just sims workbench)")

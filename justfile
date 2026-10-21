@@ -101,6 +101,14 @@ mod dstina 'apps/datastar-quiz-tina'
 [group('modules')]
 mod dsoh 'apps/datastar-quiz-odin-http'
 
+# NO SERVER: the same quiz as one self-contained HTML page. The tina port's packages (imported, not
+# copied) compiled to js_wasm32, with the routes running in the page and Datastar's fetch answered
+# from the module -- so the file can be emailed, copied or opened from disk. apps/datastar-quiz-wasm/README.md.
+
+# the quiz as a single offline page (Odin -> wasm, Datastar unchanged): page, test, lint, serve, ...
+[group('modules')]
+mod dswasm 'apps/datastar-quiz-wasm'
+
 # FOURTH implementation, in Rust: same architecture, same corpus, same routes, driven by the same
 # dsperf harness. Where the Go port answers "what does a compiled runtime cost", this one answers
 # "what does no GC and no per-call allocation cost on top of that".

@@ -130,17 +130,34 @@ filter_usable :: proc "contextless" (check: Filter_Check) -> bool {
 load :: proc(allocator := context.allocator) -> (corpus: Corpus, ok: bool) {
 	sources := [2]string{SQUAD_JSON, SWEDISH_JSON}
 	keys := VARIANT_KEYS
+	corpus, ok = load_sources(sources[:], allocator)
+	if !ok {
+		return {}, false
+	}
+	for system, index in corpus.systems {
+		if system.key != keys[index] {
+			return {}, false
+		}
+	}
+	return corpus, true
+}
 
-	if len(sources) > MAX_SYSTEMS {
+/*
+A corpus from exporter JSON supplied at RUNTIME rather than embedded: one source per system, in
+order. The first is the default when none of them is `DEFAULT_VARIANT_KEY`.
+
+The static quiz page uses this. Its wasm module is built once with no corpus in it, and whoever
+assembles the page - the build script, or the notes workbench generating a quiz for one `.bml`
+file - puts the corpus in the page beside it.
+*/
+load_sources :: proc(sources: []string, allocator := context.allocator) -> (corpus: Corpus, ok: bool) {
+	if len(sources) == 0 || len(sources) > MAX_SYSTEMS {
 		return {}, false
 	}
 	systems := make([]System, len(sources), allocator)
 	for source, index in sources {
 		system, system_ok := load_system(source, allocator)
 		if !system_ok {
-			return {}, false
-		}
-		if system.key != keys[index] {
 			return {}, false
 		}
 		// The slot each shard's memo for this system lives in. Assigned here, once, because it is a
@@ -206,8 +223,11 @@ system_for :: proc(corpus: Corpus, key: string) -> (system: ^System, ok: bool) {
 }
 
 default_system :: proc(corpus: Corpus) -> ^System {
-	system, _ := system_for(corpus, DEFAULT_VARIANT_KEY)
-	return system
+	if system, found := system_for(corpus, DEFAULT_VARIANT_KEY); found {
+		return system
+	}
+	// A corpus loaded at runtime need not have the squad system in it at all.
+	return len(corpus.systems) > 0 ? &corpus.systems[0] : nil
 }
 
 //
