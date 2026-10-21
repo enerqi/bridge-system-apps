@@ -146,6 +146,23 @@ body[data-font="rounded"] {
   --ui-font: "Nunito", "Trebuchet MS", "Segoe UI", system-ui, var(--suit-symbols), sans-serif;
 }
 
+/* THE FONT PICKER HAS TO RE-RESOLVE ON <body>. The Pico font variable is declared on :root as
+   `var(--ui-font)`, and a custom property that uses var() is resolved WHERE IT IS DECLARED - so the root's
+   value was inherited unchanged and the [data-font] rules above, which set `--ui-font` on <body>, never
+   reached the text: every choice rendered as Open Sans. Naming `--ui-font` on <body> itself (and letting
+   the form controls inherit) is what makes the picker work, as the hand-written sheet always did. */
+body {
+  font-family: var(--ui-font);
+}
+
+button,
+input,
+select,
+textarea,
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
+}
+
 /* Pico treats `body > header|main|footer` as page containers: centred, padded, and capped at
    1450px. The app bar is chrome and wants the whole width, and the layout below it is a plain div
    that is NOT so constrained -- leaving the two misaligned until this is undone. */
