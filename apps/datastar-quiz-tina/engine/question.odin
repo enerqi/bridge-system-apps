@@ -21,6 +21,12 @@ new_question :: proc(
 }
 
 // `new_question` with the choice type named, for tests.
+//
+// The candidates have distinct descriptions AND distinct auctions: an ambiguous auction has several
+// right answers, so `(1C)--1N` drawn twice put two of its meanings among the choices for one auction
+// (or the same auction twice among the auctions), and only one of them scored. A working set that
+// runs out of distinct rows gives a question with fewer choices, and the answer is picked from the
+// choices actually drawn.
 new_question_of_type :: proc(
 	auctions: []corpus.Auction,
 	working_set: []u32,
@@ -35,53 +41,66 @@ new_question_of_type :: proc(
 		return question
 	}
 
-	count := difficulty
-	candidates := make([dynamic]string, 0, count, allocator)
-	seen := make([dynamic]string, 0, count, context.temp_allocator)
-	answer_at := rand.int_max(count)
-
-	for index in 0 ..< count {
-		description, auction: string
+	Pick :: struct {
+		auction, description, auction_context: string,
+	}
+	picks := make([dynamic]Pick, 0, difficulty, context.temp_allocator)
+	for _ in 0 ..< difficulty {
+		found := false
 		for _ in 0 ..< MAX_DRAWS {
 			picked := auctions[working_set[rand.int_max(len(working_set))]]
-			pretty := prettify_description(picked.description, allocator)
+			pretty := prettify_description(picked.description, context.temp_allocator)
 			// Some auction sequences -- preludes, mostly -- carry no description at all.
-			if strings.trim_space(pretty) == "" || contains_string(seen[:], pretty) {
+			if strings.trim_space(pretty) == "" {
 				continue
 			}
-			auction = strings.join(picked.sequence, AUCTION_SEPARATOR, allocator)
-			description = pretty
+			auction := strings.join(picked.sequence, AUCTION_SEPARATOR, context.temp_allocator)
+			if picked_already(picks[:], auction, pretty) {
+				continue
+			}
+			append(&picks, Pick{auction, pretty, picked.section})
+			found = true
 			break
 		}
-		if description == "" {
+		if !found {
 			break
-		}
-		append(&seen, description)
-
-		switch choice_type {
-		case .Auctions:
-			if index == answer_at {
-				question.answer = description
-				question.answer_candidate = auction
-			}
-			append(&candidates, auction)
-		case .Descriptions:
-			if index == answer_at {
-				question.answer = auction
-				question.answer_candidate = description
-			}
-			append(&candidates, description)
-		case .None:
 		}
 	}
-	question.candidates = candidates[:]
+	if len(picks) == 0 {
+		return question
+	}
+
+	answer := picks[rand.int_max(len(picks))]
+	candidates := make([]string, len(picks), allocator)
+	contexts := make([]string, len(picks), allocator)
+	for pick, index in picks {
+		switch choice_type {
+		case .Auctions:
+			candidates[index] = strings.clone(pick.auction, allocator)
+			contexts[index] = pick.auction_context
+		case .Descriptions, .None:
+			candidates[index] = strings.clone(pick.description, allocator)
+		}
+	}
+	switch choice_type {
+	case .Auctions:
+		question.answer = strings.clone(answer.description, allocator)
+		question.answer_candidate = strings.clone(answer.auction, allocator)
+	case .Descriptions:
+		question.answer = strings.clone(answer.auction, allocator)
+		question.answer_candidate = strings.clone(answer.description, allocator)
+		question.answer_context = answer.auction_context
+	case .None:
+	}
+	question.candidates = candidates
+	question.candidate_contexts = contexts
 	return question
 }
 
 @(private = "file")
-contains_string :: proc(haystack: []string, needle: string) -> bool {
-	for value in haystack {
-		if value == needle {
+picked_already :: proc(picks: []$T, auction, description: string) -> bool {
+	for pick in picks {
+		if pick.auction == auction || pick.description == description {
 			return true
 		}
 	}

@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 import functools
 import os
@@ -160,6 +160,10 @@ class BidSequenceMeaning:
     _debug_headers_context: list[Header]
     _parsed_context_bids: list[str]
     _initial_sequence: list[str]
+    # Where in the notes this meaning comes from, for an auction that means different things in
+    # different sections ("Opponents open Strong 1C" vs "Opponents open 1C Natural (Quasi)"); "" for
+    # an auction with one meaning. Set by `mark_ambiguous_contexts`.
+    context: str = ""
 
 
 # Gate: does this header look like an auction at all? The suit class must allow
@@ -320,7 +324,43 @@ def collect_bid_table_auctions(bid_tables: list[BidTable], debug: bool = False) 
     if debug:
         print("Unique contexts:")
         pprint(unique_contexts_to_examples)
+    mark_ambiguous_contexts(sequences)
     return sequences
+
+
+CONTEXT_SEPARATOR = " › "
+
+
+def mark_ambiguous_contexts(sequences: list[BidSequenceMeaning]) -> None:
+    """Give every meaning of an AMBIGUOUS auction the headings that tell it apart.
+
+    An auction is ambiguous when its rows carry two or more different (stripped, non-empty)
+    descriptions: `(1C)--1N` is one thing after a strong club and another after a natural one, and
+    the quiz showing the bare auction asks the player to guess which. The headings above each row
+    say which, so the auction's rows are compared heading path against heading path and each gets
+    the part of its own path from the first heading where the paths differ: "Opponents open Strong
+    1C" rather than the whole "Competitive Auctions > ..." chain they share. A path that ends where
+    the others go on gets its last heading; rows whose paths are all the same get nothing, as the
+    headings cannot separate them (their descriptions usually qualify themselves).
+    """
+    groups: dict[tuple[str, ...], list[BidSequenceMeaning]] = {}
+    for seq in sequences:
+        if seq.description.strip():
+            groups.setdefault(tuple(seq.sequence), []).append(seq)
+
+    for rows in groups.values():
+        if len({row.description.strip() for row in rows}) < 2:
+            continue
+        paths = [[header.text for header in row._debug_headers_context] for row in rows]
+        if all(path == paths[0] for path in paths):
+            continue
+        shortest = min(len(path) for path in paths)
+        split = 0
+        while split < shortest and all(path[split] == paths[0][split] for path in paths):
+            split += 1
+        for row, path in zip(rows, paths):
+            tail = path[split:] or path[-1:]
+            row.context = CONTEXT_SEPARATOR.join(tail)
 
 
 # The bid model lives in the bml tools (bmlbids.py) so the parser, the html
@@ -359,6 +399,12 @@ class Question:
     answer_candidate: str
     choice_type: MultiChoiceType
     _debug_bid_sequences: list[BidSequenceMeaning]
+    # The `context` of the auction shown as `answer` (a Descriptions question), and of each auction
+    # candidate (an Auctions question), "" where the auction has one meaning or the text is a
+    # description. What a player needs to tell `(1C)--X` after a strong club from `(1C)--X` after a
+    # natural one.
+    answer_context: str = ""
+    candidate_contexts: list[str] = field(default_factory=list)
 
 
 def random_multi_choice_type() -> MultiChoiceType:
@@ -368,80 +414,66 @@ def random_multi_choice_type() -> MultiChoiceType:
         return MultiChoiceType.Descriptions
 
 
+# Bounds the "keep drawing until the candidates are distinct" loop: a filter that selects few
+# auctions can run out of distinct ones, and then the question has fewer choices instead of hanging.
+MAX_DRAWS = 1000
+
+
 def generate_question(
     bid_sequences: list[BidSequenceMeaning],
     multi_choice_count: int = 5,
     choice_type: MultiChoiceType = MultiChoiceType.Auctions,
 ) -> Question:
-    answer_index = random.randint(0, multi_choice_count - 1)  # e.g. 0-4
-    answer = ""
-    answer_candidate = ""
-    pretty_descriptions = set()
-    candidates = []
-    _debug_bid_sequences = []
+    """Draw `multi_choice_count` rows with distinct descriptions AND distinct auctions, and ask one.
 
+    Distinct auctions because an ambiguous auction has several right answers: `(1C)--1N` drawn twice
+    put both "5S + 5 other" and "~15--18" among the choices for one auction (or the same auction
+    twice among the auctions), and only one of them scored.
+    """
+    picks: list[tuple[str, str, str, BidSequenceMeaning]] = []  # auction, description, context, row
+    seen_descriptions: set[str] = set()
+    seen_auctions: set[str] = set()
+
+    for _ in range(multi_choice_count):
+        for _ in range(MAX_DRAWS):
+            rand_seq = bid_sequences[random.randint(0, len(bid_sequences) - 1)]
+            pretty_description = prettify_description(rand_seq.description)
+            question_auction = " --> ".join(rand_seq.sequence)
+            # some auction sequences, some preludes do not have descriptions
+            if (
+                pretty_description.strip()
+                and pretty_description not in seen_descriptions
+                and question_auction not in seen_auctions
+            ):
+                picks.append((question_auction, pretty_description, rand_seq.context, rand_seq))
+                seen_descriptions.add(pretty_description)
+                seen_auctions.add(question_auction)
+                break
+        else:
+            break
+
+    if not picks:
+        return Question(candidates=[], answer="", answer_candidate="", choice_type=choice_type, _debug_bid_sequences=[])
+
+    answer_auction, answer_description, answer_context, _ = picks[random.randint(0, len(picks) - 1)]
     if choice_type == MultiChoiceType.Auctions:
-        for question_index in range(multi_choice_count):  # e.g. 0-4
-            # Do not want multiple identical answers
-            while True:
-                index = random.randint(0, len(bid_sequences) - 1)
-                rand_seq = bid_sequences[index]
-                auction, description = rand_seq.sequence, rand_seq.description
-                pretty_description = prettify_description(description)
-
-                # some auction sequences, some preludes do not have descriptions
-                if pretty_description.strip() and pretty_description not in pretty_descriptions:
-                    _debug_bid_sequences.append(rand_seq)
-                    break
-
-            pretty_descriptions.add(pretty_description)
-
-            question_auction = " --> ".join(auction)
-
-            if question_index == answer_index:
-                answer = pretty_description
-                answer_candidate = question_auction
-
-            candidates.append(question_auction)
-
         return Question(
-            candidates=candidates,
-            answer=answer,
-            answer_candidate=answer_candidate,
+            candidates=[auction for auction, _, _, _ in picks],
+            answer=answer_description,
+            answer_candidate=answer_auction,
             choice_type=choice_type,
-            _debug_bid_sequences=_debug_bid_sequences,
+            _debug_bid_sequences=[row for _, _, _, row in picks],
+            candidate_contexts=[context for _, _, context, _ in picks],
         )
-    else:
-        for question_index in range(multi_choice_count):
-            # Do not want multiple identical answers
-            while True:
-                index = random.randint(0, len(bid_sequences) - 1)
-                rand_seq = bid_sequences[index]
-                auction, description = rand_seq.sequence, rand_seq.description
-                pretty_description = prettify_description(description)
-
-                # some auction sequences, some preludes do not have descriptions
-                if pretty_description.strip() and pretty_description not in pretty_descriptions:
-                    _debug_bid_sequences.append(rand_seq)
-                    break  # unique description
-
-            pretty_descriptions.add(pretty_description)
-
-            question_auction = " --> ".join(auction)
-
-            if question_index == answer_index:
-                answer_candidate = pretty_description  # the explanation text
-                answer = question_auction
-
-            candidates.append(pretty_description)
-
-        return Question(
-            candidates=candidates,
-            answer=answer,
-            answer_candidate=answer_candidate,
-            choice_type=choice_type,
-            _debug_bid_sequences=_debug_bid_sequences,
-        )
+    return Question(
+        candidates=[description for _, description, _, _ in picks],
+        answer=answer_auction,
+        answer_candidate=answer_description,
+        choice_type=choice_type,
+        _debug_bid_sequences=[row for _, _, _, row in picks],
+        answer_context=answer_context,
+        candidate_contexts=["" for _ in picks],
+    )
 
 
 def show_bid_table_sequences(tables: list[BidTable], show_table_context: bool):

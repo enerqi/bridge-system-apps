@@ -68,13 +68,13 @@ clean:
 	for directory in ("target", "dist"):
 	    shutil.rmtree(directory, ignore_errors=True)
 
-# The notes workbench BUNDLES the template (`#load`ed into its exe, so its quiz button needs no setup), from
-# a vendored copy in the notes repo. This refreshes that copy; rebuild the workbench afterwards. The notes
-# repo is found the way the rest of this repo finds it, through BRIDGE_SYSTEM_HOME.
-notes_home := env_var_or_default("BRIDGE_SYSTEM_HOME", join(home_directory(), "docs", "bridge", "bridge-bidding-system"))
-vendored_template := join(notes_home, "deal-simulations", "odin-sims", "ui", "quiz-template.html")
+# The workbench BUNDLES the template (`#load`ed into its exe, so its quiz button needs no setup), from a
+# vendored copy in its repository (enerqi/bridge-workbench - it was the notes repo's deal-simulations/odin-sims
+# until 2026-10-22). This refreshes that copy; rebuild the workbench afterwards. WORKBENCH_HOME locates it.
+workbench_home := env_var_or_default("WORKBENCH_HOME", join(home_directory(), "dev", "bridge-workbench"))
+vendored_template := join(workbench_home, "ui", "quiz-template.html")
 
-# rebuild the template and copy it into the notes workbench (then rebuild the workbench there)
+# rebuild the template and copy it into the workbench (then rebuild the workbench there)
 [group('build')]
 [script]
 vendor-template: template
@@ -82,6 +82,6 @@ vendor-template: template
 	from pathlib import Path
 	target = Path(r"{{ vendored_template }}")
 	if not target.parent.is_dir():
-	    raise SystemExit(f"no notes workbench at {target.parent} - set BRIDGE_SYSTEM_HOME")
+	    raise SystemExit(f"no workbench checkout at {target.parent} - set WORKBENCH_HOME")
 	shutil.copyfile(r"{{ template }}", target)
-	print(f"{target}: {target.stat().st_size:,} bytes - now rebuild the workbench (just sims workbench)")
+	print(f"{target}: {target.stat().st_size:,} bytes - now rebuild the workbench (just workbench)")

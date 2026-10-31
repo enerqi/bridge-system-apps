@@ -4,7 +4,7 @@
    marked, and nothing advances until you say so. The clock for the NEXT question starts when it is
    served, so reading this costs you no time bonus. Enter / Space advance as well as the button. #}
 <h2 class="intro">{{ intro }}</h2>
-<p class="answer">&ldquo;<strong>{{ answer | suits }}</strong>&rdquo;</p>
+<p class="answer">&ldquo;<strong>{{ answer | suits }}</strong>&rdquo;{% if answer_context %}<small class="quiz-context">{{ answer_context | suits }}</small>{% endif %}</p>
 <div class="candidates" role="group" aria-label="answer choices, revealed">
   {% for candidate in candidates %}
   <div class="candidate revealed
@@ -12,7 +12,7 @@
     <span class="mark" aria-hidden="true">
       {%- if loop.index0 == correct_index %}✓{% elif loop.index0 == wrong_index %}✗{% endif -%}
     </span>
-    <span class="candidate-text">{{ candidate | suits }}</span>
+    <span class="candidate-text">{{ candidate | suits }}{% if candidate_contexts[loop.index0] %}<small class="quiz-context">{{ candidate_contexts[loop.index0] | suits }}</small>{% endif %}</span>
   </div>
   {% endfor %}
 </div>

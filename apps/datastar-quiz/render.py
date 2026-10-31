@@ -249,6 +249,10 @@ def _quiz_context(session: state.Session) -> dict:
         "intro": _INTRO[question.choice_type.value],
         "answer": answer[:1].upper() + answer[1:],
         "candidates": [emoji_text_auction(c) for c in question.candidates],
+        # The section an ambiguous auction is from, "" where the auction means one thing. Not run
+        # through `emoji_text_auction`: it is a heading, not an auction.
+        "answer_context": question.answer_context,
+        "candidate_contexts": question.candidate_contexts or [""] * len(question.candidates),
         "qid": session.qid,
         "prefix": url_prefix(),
         "variant_query": variant_query(session.variant),

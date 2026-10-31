@@ -24,11 +24,13 @@ SQUAD_JSON :: #load("data/squad.json", string)
 @(private)
 SWEDISH_JSON :: #load("data/swedish.json", string)
 
-// What the exporter writes. Field names match the JSON keys exactly, so no tags are needed.
+// What the exporter writes. Field names match the JSON keys, except `section`: its key is `context`,
+// a keyword in Odin. It is written only where it is set, and a missing key reads as "".
 @(private)
 Exported_Auction :: struct {
 	sequence:    []string,
 	description: string,
+	section:     string `json:"context"`,
 }
 
 @(private)
@@ -49,9 +51,14 @@ Exported_System :: struct {
 }
 
 // One auction and what it means, as the quiz shows it.
+//
+// `section` is the part of the notes an AMBIGUOUS auction comes from ("Opponents open Strong 1C"):
+// the headings that tell its meanings apart, as `quiz.mark_ambiguous_contexts` writes them (the
+// python's `context`). "" for an auction that means one thing.
 Auction :: struct {
 	sequence:    []string,
 	description: string,
+	section:     string,
 }
 
 // A quiz variant: one bml system, its auctions, its topic list, and the pre-parsed index the filter
@@ -181,6 +188,7 @@ load_system :: proc(source: string, allocator: runtime_allocator) -> (system: Sy
 		auctions[index] = Auction {
 			sequence    = entry.sequence,
 			description = entry.description,
+			section     = entry.section,
 		}
 		sequences[index] = entry.sequence
 	}

@@ -364,3 +364,43 @@ test_an_empty_working_set_produces_no_candidates :: proc(t: ^testing.T) {
 	question := new_question_of_type(auctions, {}, 5, .Auctions, context.temp_allocator)
 	testing.expect_value(t, len(question.candidates), 0)
 }
+
+// An ambiguous auction has several right answers, so it is never among the choices twice -- and the
+// section that tells its meanings apart travels with whichever auction is shown.
+@(test)
+test_a_question_never_offers_one_auction_twice :: proc(t: ^testing.T) {
+	auctions := []corpus.Auction {
+		{sequence = {"(1C)", "1N"}, description = "5S + 5 other", section = "Opponents open Strong 1C"},
+		{sequence = {"(1C)", "1N"}, description = "~15--18", section = "Opponents open 1C Natural"},
+		{sequence = {"(1C)", "1N"}, description = "a third meaning", section = "Elsewhere"},
+		{sequence = {"1C", "1H"}, description = "hearts"},
+		{sequence = {"1C", "1S"}, description = "spades"},
+	}
+	working_set := []u32{0, 1, 2, 3, 4}
+	for _ in 0 ..< 200 {
+		for choice_type in ([]Choice_Type{.Auctions, .Descriptions}) {
+			question := new_question_of_type(auctions, working_set, 5, choice_type, context.temp_allocator)
+			// three distinct auctions in the working set, so three choices, not a hang
+			testing.expect_value(t, len(question.candidates), 3)
+			testing.expect_value(t, len(question.candidate_contexts), 3)
+			_, found := answer_index(question)
+			testing.expect(t, found)
+			if choice_type == .Descriptions {
+				expect_section_of(t, question.answer, question.answer_context)
+			} else {
+				for candidate, index in question.candidates {
+					expect_section_of(t, candidate, question.candidate_contexts[index])
+				}
+			}
+		}
+	}
+}
+
+@(private = "file")
+expect_section_of :: proc(t: ^testing.T, auction, section: string) {
+	if auction == "(1C) --> 1N" {
+		testing.expect(t, section != "", "the ambiguous auction lost its section")
+	} else {
+		testing.expect_value(t, section, "")
+	}
+}

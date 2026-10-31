@@ -3,7 +3,7 @@
 #
 # This repo is the applications half of the bridge system. The other half -- the .bml system notes,
 # the BML -> HTML build and the deal simulations -- lives in bridge-bidding-system, and stays there.
-# SHELL, as in the app justfiles and deal-simulations/odin-sims: `cmd.exe` starts in ~9ms and is
+# SHELL, as in the app justfiles and bridge-workbench: `cmd.exe` starts in ~9ms and is
 # always available, and just launches a shell per recipe line.
 #  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
 #  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic

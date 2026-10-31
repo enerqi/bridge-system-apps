@@ -5,8 +5,8 @@ this app draws questions from. Writing a third BML parser in Go is weeks of work
 what the comparison is about, so the corpus is exported here -- by the implementation that
 already owns it -- and loaded there at boot.
 
-What is exported is exactly `quiz.BidSequenceMeaning`'s public fields (`sequence` and
-`description`, the underscore-prefixed debug fields are not needed) plus the variant's
+What is exported is exactly `quiz.BidSequenceMeaning`'s public fields (`sequence`,
+`description` and, where set, `context`; the underscore-prefixed debug fields are not needed) plus the variant's
 topics, resolved through `bidfilter.topics_file_for` / `load_topics` so the go side never
 has to know the one-file-per-variant rule or read a toml.
 
@@ -39,7 +39,13 @@ def export(variant: corpus.Variant) -> dict:
         "title": variant.title,
         "bml_file": variant.bml_file,
         "system_notes_url": variant.system_notes_url,
-        "auctions": [{"sequence": list(seq.sequence), "description": seq.description} for seq in sequences],
+        # `context` only where it says something: the headings that tell an ambiguous auction's
+        # meanings apart (`quiz.mark_ambiguous_contexts`). A loader without the field reads "".
+        "auctions": [
+            {"sequence": list(seq.sequence), "description": seq.description}
+            | ({"context": seq.context} if seq.context else {})
+            for seq in sequences
+        ],
         "topics": [
             {
                 "name": topic.name,

@@ -14,7 +14,7 @@ just dswasm serve    # localhost:5090, for tools that refuse file:// (playwright
 `bridge-quiz.html?swedish` opens the Swedish Club variant and `?debug` arms the debug panel, as on
 the servers.
 
-## The template, and the notes workbench
+## The template, and the workbench
 
 The corpus is NOT compiled into the module. The page carries it as JSON beside the module
 (`<script id="quiz-corpus">`), and `host.js` hands it over system by system (`qz_add_system`, then
@@ -22,12 +22,12 @@ The corpus is NOT compiled into the module. The page carries it as JSON beside t
 with the corpus left out: the text `/*QUIZ_CORPUS*/`, exactly once. To fill it, replace that text with a
 JSON array of systems in the exporter's shape, with every `</` written `<\/`.
 
-That is what the notes workbench's `quiz` button does, for whichever `.bml` file it has open: it reads the
-bid tables out of its editor buffer (its `quiz_corpus` package, held to the python extraction over every
+That is what the workbench's `quiz` button does ([enerqi/bridge-workbench](https://github.com/enerqi/bridge-workbench)),
+for whichever `.bml` file it has open: it reads the bid tables out of its editor buffer (its `quiz_corpus` package, held to the python extraction over every
 file in the corpus) and writes `<file>-quiz.html`. The workbench BUNDLES the template, from a vendored
-copy in the notes repo, so its users need nothing set up. **After changing this app, run
+copy in its repository, so its users need nothing set up. **After changing this app, run
 `just dswasm vendor-template`** (it rebuilds the template and copies it to
-`$BRIDGE_SYSTEM_HOME/deal-simulations/odin-sims/ui/quiz-template.html`), then rebuild the workbench. Its
+`$WORKBENCH_HOME/ui/quiz-template.html`, default `~/dev/bridge-workbench`), then rebuild the workbench. Its
 settings can also point at `dist/quiz-template.html` directly, to try a build before vendoring it.
 
 The wasm build is not byte-reproducible (the compiler lays data out differently from run to run), so

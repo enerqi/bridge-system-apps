@@ -68,8 +68,10 @@ write_quiz_body :: proc(out: ^strings.Builder, s: ^session.Session, prefix: stri
 	write_escaped(out, intro_for(s.question.choice_type))
 	strings.write_string(out, `</h2>`)
 	strings.write_string(out, `<p class="answer">&ldquo;<strong>`)
-	write_escaped(out, answer)
-	strings.write_string(out, `</strong>&rdquo;</p>`)
+	suits(out, answer)
+	strings.write_string(out, `</strong>&rdquo;`)
+	write_context(out, s.question.answer_context)
+	strings.write_string(out, `</p>`)
 
 	// `data-attr` in the OBJECT form, because a hyphenated attribute name cannot survive as a key:
 	// `data-attr:aria-busy` is kebab-then-camel converted to `ariaBusy` and nothing reaches the DOM
@@ -122,7 +124,8 @@ write_quiz_body :: proc(out: ^strings.Builder, s: ^session.Session, prefix: stri
 		strings.write_string(out, `<kbd class="accel tag is-light" aria-hidden="true">`)
 		strings.write_int(out, index + 1)
 		strings.write_string(out, `</kbd><span class="candidate-text">`)
-		write_escaped(out, emoji_text_auction(candidate, context.temp_allocator))
+		suits(out, emoji_text_auction(candidate, context.temp_allocator))
+		write_context(out, candidate_context(s.question, index))
 		strings.write_string(out, `</span></button>`)
 	}
 	strings.write_string(out, `</div>`)
@@ -141,8 +144,10 @@ write_reveal_body :: proc(out: ^strings.Builder, s: ^session.Session, prefix: st
 	write_escaped(out, intro_for(s.question.choice_type))
 	strings.write_string(out, `</h2>`)
 	strings.write_string(out, `<p class="answer">&ldquo;<strong>`)
-	write_escaped(out, emoji_text_auction(s.question.answer, context.temp_allocator))
-	strings.write_string(out, `</strong>&rdquo;</p>`)
+	suits(out, emoji_text_auction(s.question.answer, context.temp_allocator))
+	strings.write_string(out, `</strong>&rdquo;`)
+	write_context(out, s.question.answer_context)
+	strings.write_string(out, `</p>`)
 
 	strings.write_string(out, `<div class="candidates" role="group" aria-label="answer choices, revealed">`)
 	for candidate, index in s.question.candidates {
@@ -159,7 +164,8 @@ write_reveal_body :: proc(out: ^strings.Builder, s: ^session.Session, prefix: st
 			strings.write_string(out, "&#10007;")
 		}
 		strings.write_string(out, `</span><span class="candidate-text">`)
-		write_escaped(out, emoji_text_auction(candidate, context.temp_allocator))
+		suits(out, emoji_text_auction(candidate, context.temp_allocator))
+		write_context(out, candidate_context(s.question, index))
 		strings.write_string(out, `</span></div>`)
 	}
 	strings.write_string(out, `</div>`)
@@ -190,6 +196,22 @@ write_reveal_body :: proc(out: ^strings.Builder, s: ^session.Session, prefix: st
 	strings.write_string(out, query)
 	strings.write_string(out, `')">Next question</button>`)
 	strings.write_string(out, `<span class="reveal-hint">or press Enter</span></div>`)
+}
+
+// The section an ambiguous auction comes from, under it -- nothing for an auction with one meaning.
+// A heading, not an auction, so it is escaped but not glyphed.
+write_context :: proc(out: ^strings.Builder, section: string) {
+	if section == "" {
+		return
+	}
+	strings.write_string(out, `<small class="quiz-context">`)
+	write_escaped(out, section)
+	strings.write_string(out, `</small>`)
+}
+
+@(private = "file")
+candidate_context :: proc "contextless" (question: engine.Question, index: int) -> string {
+	return index < len(question.candidate_contexts) ? question.candidate_contexts[index] : ""
 }
 
 // HTML text escaping. The corpus is trusted content, but the filter box is not, and the same writer

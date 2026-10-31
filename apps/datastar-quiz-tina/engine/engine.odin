@@ -86,11 +86,17 @@ Choice_Type :: enum u8 {
 }
 
 // One question as the browser will see it.
+//
+// `answer_context` is the section of the auction shown as `answer` (a Descriptions question), and
+// `candidate_contexts` that of each auction candidate (an Auctions question): "" where the auction
+// means one thing, or the text is a description.
 Question :: struct {
-	candidates:       []string,
-	answer:           string,
-	answer_candidate: string,
-	choice_type:      Choice_Type,
+	candidates:         []string,
+	answer:             string,
+	answer_candidate:   string,
+	choice_type:        Choice_Type,
+	answer_context:     string,
+	candidate_contexts: []string,
 }
 
 // Where the right answer sits among the candidates.
@@ -107,13 +113,12 @@ answer_index :: proc(question: Question) -> (index: int, ok: bool) {
 // the renderer then turns into a glyph.
 AUCTION_SEPARATOR :: " --> "
 
-// Bounds the "keep drawing until the descriptions are distinct" loop.
+// Bounds the "keep drawing until the candidates are distinct" loop, per candidate.
 //
-// The python spins forever if a working set holds fewer distinct non-blank descriptions than the
-// question needs candidates, and it cannot happen in practice: a filter selecting fewer than
-// MAX_DIFFICULTY auctions is rejected as `too_few` and the whole system is used instead. A task that
-// never returns is a worse failure than a repeated candidate, so the loop gives up rather than
-// hanging -- on any corpus where the python terminates, this bound is never reached.
+// A working set can hold fewer distinct rows than the question needs candidates: a filter selecting
+// fewer than MAX_DIFFICULTY auctions is rejected as `too_few`, but eight rows can still share
+// auctions, and the candidates' auctions must be distinct too. Then the question gets fewer choices
+// rather than the draw hanging (the python bounds its loop the same way, at `quiz.MAX_DRAWS`).
 @(private)
 MAX_DRAWS :: 10_000
 

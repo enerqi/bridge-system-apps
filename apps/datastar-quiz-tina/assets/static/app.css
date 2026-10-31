@@ -1320,3 +1320,14 @@ button.danger {
 :root[data-theme="light"] {
   color-scheme: only light;
 }
+
+/* The section an AMBIGUOUS auction comes from ("Opponents open Strong 1C"), under the auction: the
+   same calls mean different things in different parts of the notes, and without it the player has
+   to guess which part the question is from. */
+.quiz-context {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.9rem;
+  font-weight: normal;
+  opacity: 0.75;
+}

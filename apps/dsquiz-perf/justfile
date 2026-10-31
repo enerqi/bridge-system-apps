@@ -3,7 +3,7 @@
 # Reachable from the repo root as a just module (`mod dsperf 'apps/dsquiz-perf'` there):
 #     just dsperf smoke, just dsperf headless, ...
 #
-# SHELL, as in deal-simulations/odin-sims: `cmd.exe` starts in ~9ms and is always available, and just
+# SHELL, as in bridge-workbench: `cmd.exe` starts in ~9ms and is always available, and just
 # launches a shell per recipe line.
 #  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
 #  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic
